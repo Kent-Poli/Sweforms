@@ -3,239 +3,163 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sweforms | Kreativt, bygg & golvteknik</title>
-  <meta name="description" content="Sweforms samlar kreativ produktion, måleri, avjämning & betong samt golvteknisk rådgivning under ett varumärke." />
+  <title>Sweforms</title>
+  <meta name="description" content="Sweforms – välj Bygg eller Form." />
   <meta name="robots" content="index,follow" />
   <meta name="theme-color" content="#0b0b0d" />
   <link rel="canonical" href="https://sweforms.se/" />
-  <meta property="og:title" content="Sweforms" />
-  <meta property="og:description" content="Kreativt, bygg och golvteknik under ett varumärke." />
-  <meta property="og:type" content="website" />
-  <meta property="og:locale" content="sv_SE" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root{
+      --bg:#09090b;
+      --text:#f3f2ee;
+      --muted:#a8a7a2;
+      --gold:#c7a15c;
+      --line:rgba(255,255,255,.09);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
+    body{min-height:100vh;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    .portal-shell{min-height:100vh;display:flex;flex-direction:column}
+    .portal-header{
+      height:78px;display:flex;align-items:center;justify-content:space-between;
+      padding:0 clamp(20px,4vw,56px);border-bottom:1px solid var(--line);
+      background:rgba(9,9,11,.88);backdrop-filter:blur(14px);position:relative;z-index:20
+    }
+    .portal-brand{display:flex;flex-direction:column;gap:3px}
+    .portal-brand strong{font-size:1rem;letter-spacing:.24em;text-transform:uppercase}
+    .portal-brand span{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+    .portal-about{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 0}
+    .portal-about:hover{color:var(--text)}
+    .portal-grid{
+      flex:1;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);
+      min-height:calc(100vh - 78px)
+    }
+    .portal-choice{
+      --x:50%;--y:50%;--dx:0px;--dy:0px;
+      position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:flex-end;
+      padding:clamp(28px,5vw,72px);background:#0d0d11;min-width:0;
+      transition:background .35s ease
+    }
+    .portal-choice::before{
+      content:"";position:absolute;inset:0;z-index:-3;
+      background:
+        radial-gradient(circle 300px at var(--x) var(--y),rgba(199,161,92,.17),transparent 68%),
+        linear-gradient(145deg,rgba(255,255,255,.025),transparent 52%);
+      opacity:.72;transition:opacity .35s ease
+    }
+    .portal-choice.form::before{
+      background:
+        radial-gradient(circle 300px at var(--x) var(--y),rgba(107,125,255,.15),transparent 68%),
+        linear-gradient(145deg,rgba(255,255,255,.025),transparent 52%)
+    }
+    .portal-gridlines{
+      position:absolute;inset:-12%;z-index:-4;opacity:.20;pointer-events:none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);
+      background-size:48px 48px;
+      transform:perspective(700px) rotateX(58deg) translate3d(calc(var(--dx)*.45),calc(var(--dy)*.45),0);
+      transform-origin:center 70%;transition:transform .14s ease-out
+    }
+    .portal-orb{
+      position:absolute;width:240px;height:240px;border:1px solid rgba(199,161,92,.34);
+      border-radius:38%;right:10%;top:16%;z-index:-1;
+      transform:translate3d(calc(var(--dx)*.7),calc(var(--dy)*.7),0) rotate(18deg);
+      transition:transform .16s ease-out,border-color .3s ease,border-radius .3s ease
+    }
+    .form .portal-orb{
+      border-radius:50%;border-color:rgba(113,132,235,.32)
+    }
+    .portal-orb::before,.portal-orb::after{
+      content:"";position:absolute;inset:22px;border:1px solid rgba(255,255,255,.10);border-radius:inherit
+    }
+    .portal-orb::after{inset:48px;border-color:rgba(255,255,255,.07)}
+    .portal-copy{position:relative;z-index:2;max-width:700px;transform:translate3d(calc(var(--dx)*.10),calc(var(--dy)*.10),0);transition:transform .14s ease-out}
+    .portal-label{display:block;font-size:.7rem;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+    .portal-title{
+      display:flex;align-items:flex-end;gap:18px;margin:0;
+      font-size:clamp(4.6rem,11vw,10rem);line-height:.76;letter-spacing:-.075em
+    }
+    .portal-arrow{
+      font-size:clamp(2rem,4vw,4rem);font-weight:400;color:var(--gold);
+      transform:translateY(-8px);transition:transform .3s ease
+    }
+    .form .portal-arrow{color:#8998ef}
+    .portal-desc{margin:24px 0 0;max-width:44ch;color:#b9b8b3;font-size:clamp(.95rem,1.3vw,1.15rem)}
+    .portal-choice:hover::before{opacity:1}
+    .portal-choice:hover .portal-arrow{transform:translate(9px,-14px)}
+    .portal-choice:hover .portal-orb{border-radius:50%;border-color:rgba(255,255,255,.25)}
+    .portal-choice:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}
+    @media(max-width:760px){
+      body{overflow:auto}
+      .portal-header{height:70px;padding:0 18px}
+      .portal-grid{grid-template-columns:1fr;min-height:calc(100vh - 70px)}
+      .portal-choice{min-height:46vh;padding:30px 22px}
+      .portal-orb{width:150px;height:150px;right:4%;top:12%}
+      .portal-title{font-size:clamp(4rem,22vw,6.8rem)}
+      .portal-desc{max-width:30ch}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .portal-choice,.portal-copy,.portal-gridlines,.portal-orb,.portal-arrow{transition:none}
+    }
+  </style>
 </head>
-<body class="home-page">
-<header class="site-header">
-  <div class="container header-inner">
-    <a href="./" class="brand" aria-label="Sweforms startsida">
-      <span class="brand-mark">Sweforms</span>
-      <span class="brand-sub">Kreativt • Bygg • Golvteknik</span>
-    </a>
-    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">Meny</button>
-    <nav class="site-nav" id="siteNav" aria-label="Huvudmeny">
-      <a href="./" class="active">Hem</a>
-      <a href="kreativt/">Kreativt</a>
-      <a href="maleri/">Måleri</a>
-      <a href="avjamning-betong/">Avjämning & betong</a>
-      <a href="golvteknik/">Golvteknik</a>
-      <a href="om.html">Om</a>
-      <a href="offert.html" class="cta">Kontakt</a>
-    </nav>
+<body>
+  <div class="portal-shell">
+    <header class="portal-header">
+      <a class="portal-brand" href="./" aria-label="Sweforms startsida">
+        <strong>Sweforms</strong>
+        <span>Form · Bygg · Teknik</span>
+      </a>
+      <a class="portal-about" href="om.html">Om</a>
+    </header>
+
+    <main class="portal-grid" aria-label="Välj område">
+      <a class="portal-choice build" href="bygg/" data-portal-choice>
+        <span class="portal-gridlines" aria-hidden="true"></span>
+        <span class="portal-orb" aria-hidden="true"></span>
+        <div class="portal-copy">
+          <span class="portal-label">Måleri · Avjämning · Golvteknik</span>
+          <h1 class="portal-title">BYGG <span class="portal-arrow" aria-hidden="true">↗</span></h1>
+          <p class="portal-desc">Praktiska tjänster och golvteknisk kunskap för företag och projekt.</p>
+        </div>
+      </a>
+
+      <a class="portal-choice form" href="form/" data-portal-choice>
+        <span class="portal-gridlines" aria-hidden="true"></span>
+        <span class="portal-orb" aria-hidden="true"></span>
+        <div class="portal-copy">
+          <span class="portal-label">3D · Design · Objekt · Digitalt</span>
+          <h1 class="portal-title">FORM <span class="portal-arrow" aria-hidden="true">↗</span></h1>
+          <p class="portal-desc">Kreativt skapande där idéer blir digitala och fysiska former.</p>
+        </div>
+      </a>
+    </main>
   </div>
-</header>
 
-<main>
-
-  <section class="forms-motion-section" aria-label="Sweforms – forms in motion">
-    <div class="forms-motion" id="formsMotion">
-      <div class="fm-grid" aria-hidden="true"></div>
-      <div class="fm-glow" aria-hidden="true"></div>
-      <div class="fm-scan" aria-hidden="true"></div>
-
-      <div class="fm-shape fm-shape-a" aria-hidden="true"><span></span></div>
-      <div class="fm-shape fm-shape-b" aria-hidden="true"><span></span></div>
-      <div class="fm-shape fm-shape-c" aria-hidden="true"><span></span></div>
-
-      <div class="fm-meta">
-        <span>SWEFORMS / FORM IN MOTION</span>
-        <span>VÄSTERÅS · 2026</span>
-      </div>
-
-      <div class="fm-content">
-        <p class="fm-kicker">KREATIVT · PRAKTISKT · TEKNISKT</p>
-        <h1>SWEFORMS</h1>
-        <div class="fm-word-wrap" aria-live="polite">
-          <span class="fm-word" id="fmWord">FORM</span>
-        </div>
-        <p class="fm-tagline">Idéer tar form.</p>
-      </div>
-
-      <div class="fm-axis fm-axis-x" aria-hidden="true"></div>
-      <div class="fm-axis fm-axis-y" aria-hidden="true"></div>
-
-      <div class="fm-footer">
-        <span>3D & DIGITALT</span>
-        <span>YTA</span>
-        <span>NIVÅ</span>
-        <span>GOLVTEKNIK</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="home-hero">
-    <div class="home-orb home-orb-one" aria-hidden="true"></div>
-    <div class="home-orb home-orb-two" aria-hidden="true"></div>
-
-    <div class="container home-hero-inner">
-      <div class="home-intro reveal">
-        <div class="home-kicker">
-          <span class="status-dot"></span>
-          <span>Sweforms · Västerås</span>
-        </div>
-
-        <h1>Praktiskt.<br><span>Kreativt.</span><br>Tekniskt.</h1>
-
-        <p class="home-lead">Fyra tydliga verksamhetsområden under ett namn. Från form och digitalt skapande till måleri, avjämning och specialiststöd inom golv.</p>
-
-        <div class="buttons home-actions">
-          <a class="btn btn-primary" href="golvteknik/">Utforska SF Golvteknik</a>
-          <a class="btn btn-secondary" href="#omraden">Se hela Sweforms</a>
-        </div>
-      </div>
-
-      <aside class="focus-panel reveal">
-        <div class="focus-panel-top">
-          <span class="focus-label">Fokus just nu</span>
-          <span class="focus-number">01</span>
-        </div>
-        <h2>SF Golvteknik</h2>
-        <p>Kunskap före golvet. Avvägning, underlagsbedömning, nivåplanering och produktionsstöd för företag.</p>
-        <div class="focus-tags">
-          <span>B2B</span>
-          <span>Västerås + ca 15 mil</span>
-          <span>På plats</span>
-        </div>
-        <a class="focus-link" href="golvteknik/">Läs om Golvteknik <span aria-hidden="true">→</span></a>
-      </aside>
-    </div>
-
-    <div class="container home-strip reveal" aria-label="Sweforms verksamhetsområden">
-      <span>3D & digitalt</span>
-      <span>Måleri</span>
-      <span>Avjämning & betong</span>
-      <span>Golvteknik</span>
-    </div>
-  </section>
-
-  <section class="home-areas" id="omraden">
-    <div class="container">
-      <div class="home-section-head reveal">
-        <div>
-          <span class="home-overline">Sweforms / områden</span>
-          <h2>Fyra spår.<br>Ett sammanhållet varumärke.</h2>
-        </div>
-        <p>Varje del får utvecklas i sin egen takt. Just nu satsar vi fullt på Golvteknik, medan de andra spåren ligger kvar som tydliga delar av Sweforms.</p>
-      </div>
-
-      <div class="bento-grid">
-        <a class="bento-card bento-feature reveal" href="golvteknik/">
-          <div class="bento-top">
-            <span class="bento-index">01</span>
-            <span class="bento-state">Aktivt fokus</span>
-          </div>
-          <div class="bento-content">
-            <span class="home-overline">SF Golvteknik</span>
-            <h3>Kunskapen före golvet.</h3>
-            <p>Avvägning, underlagsbedömning, nivåplanering, golvuppbyggnad och stöd vid avjämning.</p>
-          </div>
-          <span class="bento-arrow" aria-hidden="true">↗</span>
-        </a>
-
-        <a class="bento-card bento-creative reveal" href="kreativt/">
-          <div class="bento-top">
-            <span class="bento-index">02</span>
-          </div>
-          <div class="bento-content">
-            <span class="home-overline">SF Kreativt</span>
-            <h3>Form som går att skapa.</h3>
-            <p>3D-print, digitala produkter, betongobjekt och nya idéer.</p>
-          </div>
-          <span class="bento-arrow" aria-hidden="true">↗</span>
-        </a>
-
-        <a class="bento-card reveal" href="maleri/">
-          <div class="bento-top">
-            <span class="bento-index">03</span>
-          </div>
-          <div class="bento-content">
-            <span class="home-overline">SF Måleri</span>
-            <h3>Yta och finish.</h3>
-            <p>Måleriarbeten som eget tydligt verksamhetsområde.</p>
-          </div>
-          <span class="bento-arrow" aria-hidden="true">↗</span>
-        </a>
-
-        <a class="bento-card reveal" href="avjamning-betong/">
-          <div class="bento-top">
-            <span class="bento-index">04</span>
-          </div>
-          <div class="bento-content">
-            <span class="home-overline">SF Avjämning & Betong</span>
-            <h3>Stabila underlag.</h3>
-            <p>Avjämning och mindre betongarbeten när det praktiska jobbet behövs.</p>
-          </div>
-          <span class="bento-arrow" aria-hidden="true">↗</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="home-statement">
-    <div class="container">
-      <div class="statement-card reveal">
-        <span class="home-overline">Idén bakom Sweforms</span>
-        <p class="statement-text">Ett namn för saker som <strong>formas</strong> — digitalt, fysiskt och tekniskt.</p>
-        <div class="statement-actions">
-          <a href="om.html">Om Sweforms <span aria-hidden="true">→</span></a>
-          <a href="offert.html">Kontakt <span aria-hidden="true">→</span></a>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer class="footer">
-  <div class="container">
-    <div class="footer-top reveal">
-      <div class="footer-col">
-        <div class="brand-mark">Sweforms</div>
-        <div class="brand-sub" style="margin-top:6px;">Kreativt • Bygg • Golvteknik</div>
-        <p style="margin-top:14px; max-width:34ch;">Fyra verksamhetsområden under samma namn.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Områden</h4>
-        <div class="footer-links">
-          <a href="kreativt/">SF Kreativt</a>
-          <a href="maleri/">SF Måleri</a>
-          <a href="avjamning-betong/">SF Avjämning & Betong</a>
-          <a href="golvteknik/">SF Golvteknik</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h4>Kontakt</h4>
-        <div class="footer-links">
-          <a href="mailto:offert@sweforms.se">offert@sweforms.se</a>
-          <a href="mailto:kent@sweforms.se">kent@sweforms.se</a>
-          <a href="tel:+46738224040">073-822 40 40</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h4>Just nu</h4>
-        <div class="footer-links">
-          <a href="golvteknik/">SF Golvteknik</a>
-          <span>Utgår från Västerås</span>
-          <span>Ca 15 mils arbetsområde</span>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© <span class="year"></span> Sweforms. Alla rättigheter förbehållna.</span>
-    </div>
-  </div>
-</footer>
-<script src="script.js"></script>
+  <script>
+    document.querySelectorAll('[data-portal-choice]').forEach((choice) => {
+      if (!window.matchMedia('(pointer:fine)').matches) return;
+      choice.addEventListener('pointermove', (e) => {
+        const r = choice.getBoundingClientRect();
+        const nx = (e.clientX - r.left) / r.width;
+        const ny = (e.clientY - r.top) / r.height;
+        choice.style.setProperty('--x', (nx * 100).toFixed(1) + '%');
+        choice.style.setProperty('--y', (ny * 100).toFixed(1) + '%');
+        choice.style.setProperty('--dx', ((nx - .5) * 24).toFixed(2) + 'px');
+        choice.style.setProperty('--dy', ((ny - .5) * 18).toFixed(2) + 'px');
+      });
+      choice.addEventListener('pointerleave', () => {
+        choice.style.setProperty('--x','50%');
+        choice.style.setProperty('--y','50%');
+        choice.style.setProperty('--dx','0px');
+        choice.style.setProperty('--dy','0px');
+      });
+    });
+  </script>
 </body>
 </html>
