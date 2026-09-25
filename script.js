@@ -38,57 +38,63 @@ if (offerForm) {
 }
 
 
-const kineticBanner = document.getElementById('kineticBanner');
-if (kineticBanner) {
-  const trackA = kineticBanner.querySelector('.kinetic-marquee-a .kinetic-track');
-  const trackB = kineticBanner.querySelector('.kinetic-marquee-b .kinetic-track');
-  let motionFrame = 0;
-  let motionStartedAt = 0;
+const formsMotion = document.getElementById('formsMotion');
+if (formsMotion) {
+  const wordEl = document.getElementById('fmWord');
+  const words = ['FORM', 'YTA', 'NIVÅ', 'TEKNIK'];
+  let wordIndex = 0;
+  let frame = 0;
+  let startedAt = 0;
 
-  const runKineticMotion = (time) => {
-    if (!motionStartedAt) motionStartedAt = time;
-    const elapsed = time - motionStartedAt;
+  const animateFormsMotion = (time) => {
+    if (!startedAt) startedAt = time;
+    const t = time - startedAt;
 
-    if (trackA) {
-      const progressA = (elapsed % 23000) / 23000;
-      trackA.style.transform = 'translate3d(' + (-50 * progressA) + '%,0,0)';
-    }
+    const scan = -18 + ((t % 9000) / 9000) * 136;
+    formsMotion.style.setProperty('--scan', scan.toFixed(2) + '%');
+    formsMotion.style.setProperty('--fa', (Math.sin(t / 1200) * 9).toFixed(2) + 'px');
+    formsMotion.style.setProperty('--fb', (Math.sin(t / 1550 + 1.4) * 11).toFixed(2) + 'px');
+    formsMotion.style.setProperty('--fc', (Math.sin(t / 980 + 2.2) * 7).toFixed(2) + 'px');
+    formsMotion.style.setProperty('--ra', ((t / 130) % 360).toFixed(2) + 'deg');
+    formsMotion.style.setProperty('--rb', ((-t / 170) % 360).toFixed(2) + 'deg');
+    formsMotion.style.setProperty('--rc', ((t / 210) % 360).toFixed(2) + 'deg');
 
-    if (trackB) {
-      const progressB = (elapsed % 31000) / 31000;
-      trackB.style.transform = 'translate3d(' + (-50 + 50 * progressB) + '%,0,0)';
-    }
-
-    motionFrame = requestAnimationFrame(runKineticMotion);
+    frame = requestAnimationFrame(animateFormsMotion);
   };
 
-  motionFrame = requestAnimationFrame(runKineticMotion);
+  frame = requestAnimationFrame(animateFormsMotion);
+
+  const wordTimer = window.setInterval(() => {
+    if (!wordEl) return;
+    wordEl.classList.add('is-changing');
+    window.setTimeout(() => {
+      wordIndex = (wordIndex + 1) % words.length;
+      wordEl.textContent = words[wordIndex];
+      wordEl.classList.remove('is-changing');
+    }, 220);
+  }, 1900);
 
   if (window.matchMedia('(pointer:fine)').matches) {
-    kineticBanner.addEventListener('pointermove', (e) => {
-      const r = kineticBanner.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / r.width;
-      const ny = (e.clientY - r.top) / r.height;
-      kineticBanner.style.setProperty('--kx', ((nx - 0.5) * 20).toFixed(2) + 'px');
-      kineticBanner.style.setProperty('--ky', ((ny - 0.5) * 14).toFixed(2) + 'px');
-      kineticBanner.style.setProperty('--px', (nx * 100).toFixed(1) + '%');
-      kineticBanner.style.setProperty('--py', (ny * 100).toFixed(1) + '%');
+    formsMotion.addEventListener('pointermove', (e) => {
+      const r = formsMotion.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width - 0.5) * 24;
+      const y = ((e.clientY - r.top) / r.height - 0.5) * 18;
+      formsMotion.style.setProperty('--mx', x.toFixed(2) + 'px');
+      formsMotion.style.setProperty('--my', y.toFixed(2) + 'px');
     });
-    kineticBanner.addEventListener('pointerleave', () => {
-      kineticBanner.style.setProperty('--kx', '0px');
-      kineticBanner.style.setProperty('--ky', '0px');
-      kineticBanner.style.setProperty('--px', '50%');
-      kineticBanner.style.setProperty('--py', '50%');
+    formsMotion.addEventListener('pointerleave', () => {
+      formsMotion.style.setProperty('--mx', '0px');
+      formsMotion.style.setProperty('--my', '0px');
     });
   }
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-      cancelAnimationFrame(motionFrame);
-      motionFrame = 0;
-    } else if (!motionFrame) {
-      motionStartedAt = 0;
-      motionFrame = requestAnimationFrame(runKineticMotion);
+      cancelAnimationFrame(frame);
+      frame = 0;
+    } else if (!frame) {
+      startedAt = 0;
+      frame = requestAnimationFrame(animateFormsMotion);
     }
   });
 }
