@@ -9,16 +9,15 @@
   <meta name="theme-color" content="#0b0b0d" />
   <link rel="canonical" href="https://sweforms.se/" />
   <meta property="og:title" content="Sweforms" />
-  <meta property="og:description" content="Fyra tydliga områden under samma varumärke: kreativt, måleri, avjämning & betong samt golvteknik." />
+  <meta property="og:description" content="Kreativt, bygg och golvteknik under ett varumärke." />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="sv_SE" />
-  <meta property="og:image" content="images/maleri-room.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="home-page">
 <header class="site-header">
   <div class="container header-inner">
     <a href="./" class="brand" aria-label="Sweforms startsida">
@@ -39,69 +38,126 @@
 </header>
 
 <main>
-<section class="hero">
-  <div class="container grid grid-2">
-    <article class="image-card reveal">
-      <img src="images/maleri-room.png" alt="Sweforms arbete med ytskikt och bygg" />
-      <div class="overlay">
-        <strong>Sweforms</strong>
-        <span>Ett varumärke med flera tydliga verksamhetsområden.</span>
-      </div>
-    </article>
-    <article class="copy-card reveal">
-      <span class="eyebrow">Sweforms</span>
-      <h1>Form, yta och golvteknik.</h1>
-      <p class="lead">Sweforms samlar fyra spår under samma namn: kreativ produktion, måleri, avjämning & betong samt golvteknisk rådgivning.</p>
-      <p>Just nu ligger huvudfokus på <strong>SF Golvteknik</strong> — rådgivning, avvägning och produktionsstöd inför golvläggning.</p>
-      <div class="buttons">
-        <a class="btn btn-primary" href="golvteknik/">Se SF Golvteknik</a>
-        <a class="btn btn-secondary" href="#omraden">Se alla områden</a>
-      </div>
-    </article>
-  </div>
-</section>
+  <section class="home-hero">
+    <div class="home-orb home-orb-one" aria-hidden="true"></div>
+    <div class="home-orb home-orb-two" aria-hidden="true"></div>
 
-<section id="omraden">
-  <div class="container">
-    <div class="section-head reveal">
-      <div>
-        <span class="eyebrow">Fyra områden</span>
-        <h2>Hela Sweforms på ett ställe.</h2>
+    <div class="container home-hero-inner">
+      <div class="home-intro reveal">
+        <div class="home-kicker">
+          <span class="status-dot"></span>
+          <span>Sweforms · Västerås</span>
+        </div>
+
+        <h1>Praktiskt.<br><span>Kreativt.</span><br>Tekniskt.</h1>
+
+        <p class="home-lead">Fyra tydliga verksamhetsområden under ett namn. Från form och digitalt skapande till måleri, avjämning och specialiststöd inom golv.</p>
+
+        <div class="buttons home-actions">
+          <a class="btn btn-primary" href="golvteknik/">Utforska SF Golvteknik</a>
+          <a class="btn btn-secondary" href="#omraden">Se hela Sweforms</a>
+        </div>
       </div>
-      <p>Varje område har en egen sida. De kan byggas ut i sin egen takt utan att verksamheterna blandas ihop.</p>
+
+      <aside class="focus-panel reveal">
+        <div class="focus-panel-top">
+          <span class="focus-label">Fokus just nu</span>
+          <span class="focus-number">01</span>
+        </div>
+        <h2>SF Golvteknik</h2>
+        <p>Kunskap före golvet. Avvägning, underlagsbedömning, nivåplanering och produktionsstöd för företag.</p>
+        <div class="focus-tags">
+          <span>B2B</span>
+          <span>Västerås + ca 15 mil</span>
+          <span>På plats</span>
+        </div>
+        <a class="focus-link" href="golvteknik/">Läs om Golvteknik <span aria-hidden="true">→</span></a>
+      </aside>
     </div>
 
-    <div class="grid grid-2">
-      <article class="card service reveal">
-        <span class="eyebrow">SF Kreativt</span>
-        <h2>3D, digitalt och form.</h2>
-        <p>3D-print, digitala produkter, betongobjekt och andra kreativa projekt.</p>
-        <a class="btn btn-secondary" href="kreativt/">Till SF Kreativt</a>
-      </article>
-
-      <article class="card service reveal">
-        <span class="eyebrow">SF Måleri</span>
-        <h2>Måleri.</h2>
-        <p>Ett separat verksamhetsområde för måleriarbeten när den delen prioriteras.</p>
-        <a class="btn btn-secondary" href="maleri/">Till SF Måleri</a>
-      </article>
-
-      <article class="card service reveal">
-        <span class="eyebrow">SF Avjämning & Betong</span>
-        <h2>Avjämning och mindre betongjobb.</h2>
-        <p>Praktiska entreprenadarbeten inom avjämning och mindre betongarbeten.</p>
-        <a class="btn btn-secondary" href="avjamning-betong/">Till Avjämning & Betong</a>
-      </article>
-
-      <article class="card service reveal">
-        <span class="eyebrow">SF Golvteknik</span>
-        <h2>Kunskapen före golvet.</h2>
-        <p>Avvägning, underlagsbedömning, nivåplanering, golvuppbyggnad och produktionsstöd för B2B-kunder.</p>
-        <a class="btn btn-primary" href="golvteknik/">Till SF Golvteknik</a>
-      </article>
+    <div class="container home-strip reveal" aria-label="Sweforms verksamhetsområden">
+      <span>3D & digitalt</span>
+      <span>Måleri</span>
+      <span>Avjämning & betong</span>
+      <span>Golvteknik</span>
     </div>
-  </div>
-</section>
+  </section>
+
+  <section class="home-areas" id="omraden">
+    <div class="container">
+      <div class="home-section-head reveal">
+        <div>
+          <span class="home-overline">Sweforms / områden</span>
+          <h2>Fyra spår.<br>Ett sammanhållet varumärke.</h2>
+        </div>
+        <p>Varje del får utvecklas i sin egen takt. Just nu satsar vi fullt på Golvteknik, medan de andra spåren ligger kvar som tydliga delar av Sweforms.</p>
+      </div>
+
+      <div class="bento-grid">
+        <a class="bento-card bento-feature reveal" href="golvteknik/">
+          <div class="bento-top">
+            <span class="bento-index">01</span>
+            <span class="bento-state">Aktivt fokus</span>
+          </div>
+          <div class="bento-content">
+            <span class="home-overline">SF Golvteknik</span>
+            <h3>Kunskapen före golvet.</h3>
+            <p>Avvägning, underlagsbedömning, nivåplanering, golvuppbyggnad och stöd vid avjämning.</p>
+          </div>
+          <span class="bento-arrow" aria-hidden="true">↗</span>
+        </a>
+
+        <a class="bento-card bento-creative reveal" href="kreativt/">
+          <div class="bento-top">
+            <span class="bento-index">02</span>
+          </div>
+          <div class="bento-content">
+            <span class="home-overline">SF Kreativt</span>
+            <h3>Form som går att skapa.</h3>
+            <p>3D-print, digitala produkter, betongobjekt och nya idéer.</p>
+          </div>
+          <span class="bento-arrow" aria-hidden="true">↗</span>
+        </a>
+
+        <a class="bento-card reveal" href="maleri/">
+          <div class="bento-top">
+            <span class="bento-index">03</span>
+          </div>
+          <div class="bento-content">
+            <span class="home-overline">SF Måleri</span>
+            <h3>Yta och finish.</h3>
+            <p>Måleriarbeten som eget tydligt verksamhetsområde.</p>
+          </div>
+          <span class="bento-arrow" aria-hidden="true">↗</span>
+        </a>
+
+        <a class="bento-card reveal" href="avjamning-betong/">
+          <div class="bento-top">
+            <span class="bento-index">04</span>
+          </div>
+          <div class="bento-content">
+            <span class="home-overline">SF Avjämning & Betong</span>
+            <h3>Stabila underlag.</h3>
+            <p>Avjämning och mindre betongarbeten när det praktiska jobbet behövs.</p>
+          </div>
+          <span class="bento-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-statement">
+    <div class="container">
+      <div class="statement-card reveal">
+        <span class="home-overline">Idén bakom Sweforms</span>
+        <p class="statement-text">Ett namn för saker som <strong>formas</strong> — digitalt, fysiskt och tekniskt.</p>
+        <div class="statement-actions">
+          <a href="om.html">Om Sweforms <span aria-hidden="true">→</span></a>
+          <a href="offert.html">Kontakt <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="footer">
@@ -110,7 +166,7 @@
       <div class="footer-col">
         <div class="brand-mark">Sweforms</div>
         <div class="brand-sub" style="margin-top:6px;">Kreativt • Bygg • Golvteknik</div>
-        <p style="margin-top:14px; max-width:34ch;">Fyra tydliga verksamhetsområden under samma varumärke.</p>
+        <p style="margin-top:14px; max-width:34ch;">Fyra verksamhetsområden under samma namn.</p>
       </div>
       <div class="footer-col">
         <h4>Områden</h4>
@@ -130,7 +186,7 @@
         </div>
       </div>
       <div class="footer-col">
-        <h4>Fokus nu</h4>
+        <h4>Just nu</h4>
         <div class="footer-links">
           <a href="golvteknik/">SF Golvteknik</a>
           <span>Utgår från Västerås</span>
