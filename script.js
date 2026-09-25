@@ -38,17 +38,21 @@ if (offerForm) {
 }
 
 
-const formMachine = document.getElementById('formMachine');
-if (formMachine && window.matchMedia('(pointer:fine)').matches) {
-  formMachine.addEventListener('pointermove', (e) => {
-    const r = formMachine.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width - 0.5) * 18;
-    const y = ((e.clientY - r.top) / r.height - 0.5) * 14;
-    formMachine.style.setProperty('--mx', x + 'px');
-    formMachine.style.setProperty('--my', y + 'px');
+const kineticBanner = document.getElementById('kineticBanner');
+if (kineticBanner && window.matchMedia('(pointer:fine)').matches) {
+  kineticBanner.addEventListener('pointermove', (e) => {
+    const r = kineticBanner.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width;
+    const ny = (e.clientY - r.top) / r.height;
+    kineticBanner.style.setProperty('--kx', ((nx - 0.5) * 20).toFixed(2) + 'px');
+    kineticBanner.style.setProperty('--ky', ((ny - 0.5) * 14).toFixed(2) + 'px');
+    kineticBanner.style.setProperty('--px', (nx * 100).toFixed(1) + '%');
+    kineticBanner.style.setProperty('--py', (ny * 100).toFixed(1) + '%');
   });
-  formMachine.addEventListener('pointerleave', () => {
-    formMachine.style.setProperty('--mx', '0px');
-    formMachine.style.setProperty('--my', '0px');
+  kineticBanner.addEventListener('pointerleave', () => {
+    kineticBanner.style.setProperty('--kx', '0px');
+    kineticBanner.style.setProperty('--ky', '0px');
+    kineticBanner.style.setProperty('--px', '50%');
+    kineticBanner.style.setProperty('--py', '50%');
   });
 }
