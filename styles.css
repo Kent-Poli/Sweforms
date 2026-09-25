@@ -46,3 +46,75 @@ section{padding:40px 0}.section-head{display:flex;justify-content:space-between;
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease}.reveal.visible{opacity:1;transform:translateY(0)}
 @media (max-width:1080px){.grid-2,.split,.about,.contact-layout,.footer-top{grid-template-columns:1fr}.grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){.nav-toggle{display:inline-flex}.site-nav{display:none;position:absolute;top:calc(100% + 10px);left:16px;right:16px;padding:12px;border-radius:18px;background:rgba(12,12,14,.98);border:1px solid var(--line);box-shadow:var(--shadow);flex-direction:column;align-items:stretch}.site-nav.open{display:flex}.grid-3,.mini-grid,.form-grid{grid-template-columns:1fr}.section-head{flex-direction:column;align-items:start}.image-card{min-height:420px}.copy-card,.service,.quote,.about-card,.contact-card,.footer-top,.split .text{padding:22px} h1{font-size:clamp(2.2rem,10vw,3.8rem)}}
+
+
+/* Modern Sweforms home */
+.home-page{overflow-x:hidden;background:
+  radial-gradient(circle at 18% 8%,rgba(199,161,92,.14),transparent 24%),
+  radial-gradient(circle at 82% 14%,rgba(110,129,255,.12),transparent 26%),
+  linear-gradient(180deg,#09090b 0%,#0d0d11 100%)}
+.home-hero{position:relative;padding:76px 0 30px;overflow:hidden}
+.home-hero-inner{display:grid;grid-template-columns:1.25fr .75fr;gap:26px;align-items:end;min-height:610px}
+.home-intro{position:relative;z-index:2;max-width:820px}
+.home-kicker{display:inline-flex;align-items:center;gap:10px;color:#d5d4cf;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
+.status-dot{width:9px;height:9px;border-radius:999px;background:#8fd4a5;box-shadow:0 0 0 6px rgba(143,212,165,.08),0 0 30px rgba(143,212,165,.35)}
+.home-intro h1{font-size:clamp(4.3rem,10vw,8.6rem);line-height:.84;letter-spacing:-.075em;margin-bottom:30px;max-width:8ch}
+.home-intro h1 span{color:var(--gold)}
+.home-lead{max-width:720px;font-size:clamp(1.06rem,1.5vw,1.3rem);color:#d6d5cf}
+.home-actions{margin-top:28px}
+.focus-panel{position:relative;z-index:2;padding:28px;border-radius:28px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));backdrop-filter:blur(18px);box-shadow:0 30px 100px rgba(0,0,0,.42)}
+.focus-panel-top,.bento-top{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.focus-label,.bento-state{font-size:.76rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold)}
+.focus-number,.bento-index{font-size:.76rem;color:#74736f}
+.focus-panel h2{margin-top:42px;font-size:clamp(2rem,4vw,3.5rem)}
+.focus-tags{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0}
+.focus-tags span{padding:8px 10px;border-radius:999px;border:1px solid var(--line);font-size:.82rem;color:#d4d3ce;background:rgba(255,255,255,.025)}
+.focus-link{display:flex;justify-content:space-between;align-items:center;padding-top:18px;border-top:1px solid var(--line);font-weight:700}
+.home-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:38px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--line)}
+.home-strip span{padding:16px 18px;background:rgba(13,13,17,.96);text-align:center;color:#aaa9a5;font-size:.82rem;text-transform:uppercase;letter-spacing:.08em}
+.home-orb{position:absolute;border-radius:50%;filter:blur(4px);pointer-events:none}
+.home-orb-one{width:440px;height:440px;right:-140px;top:20px;background:radial-gradient(circle,rgba(199,161,92,.14),transparent 68%)}
+.home-orb-two{width:520px;height:520px;left:-250px;bottom:-230px;background:radial-gradient(circle,rgba(92,119,199,.10),transparent 70%)}
+.home-areas{padding:84px 0}
+.home-section-head{display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:end;margin-bottom:30px}
+.home-section-head h2{font-size:clamp(2.7rem,6vw,5.7rem);max-width:11ch}
+.home-section-head p{max-width:54ch;justify-self:end}
+.home-overline{font-size:.76rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);display:block;margin-bottom:14px}
+.bento-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.bento-card{position:relative;min-height:330px;padding:28px;border-radius:28px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));overflow:hidden;transition:transform .25s ease,border-color .25s ease,background .25s ease}
+.bento-card:hover{transform:translateY(-4px);border-color:rgba(199,161,92,.34);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.018))}
+.bento-feature{grid-row:span 2;min-height:678px;background:
+  radial-gradient(circle at 85% 14%,rgba(199,161,92,.18),transparent 32%),
+  linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015))}
+.bento-creative{background:
+  radial-gradient(circle at 90% 8%,rgba(108,124,255,.14),transparent 34%),
+  linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012))}
+.bento-content{position:absolute;left:28px;right:70px;bottom:28px}
+.bento-content h3{font-size:clamp(2rem,4vw,4.3rem);letter-spacing:-.055em;max-width:8ch}
+.bento-card:not(.bento-feature) .bento-content h3{font-size:clamp(1.8rem,3vw,2.8rem);max-width:10ch}
+.bento-content p{max-width:48ch}
+.bento-arrow{position:absolute;right:26px;bottom:24px;width:40px;height:40px;border-radius:999px;border:1px solid var(--line2);display:grid;place-items:center;color:#d8d7d2}
+.home-statement{padding:18px 0 78px}
+.statement-card{padding:42px;border-radius:30px;border:1px solid var(--line);background:linear-gradient(120deg,rgba(199,161,92,.08),rgba(255,255,255,.02) 44%,rgba(94,110,190,.07));box-shadow:var(--shadow)}
+.statement-text{font-size:clamp(2rem,5vw,4.7rem);line-height:1.02;letter-spacing:-.055em;color:var(--text);max-width:16ch;margin-bottom:34px}
+.statement-text strong{color:var(--gold)}
+.statement-actions{display:flex;gap:24px;flex-wrap:wrap}
+.statement-actions a{font-weight:700;color:#d7d6d1}
+
+@media (max-width:1080px){
+  .home-hero-inner,.home-section-head,.bento-grid{grid-template-columns:1fr}
+  .home-hero-inner{min-height:auto}
+  .focus-panel{max-width:720px}
+  .home-section-head p{justify-self:start}
+  .bento-feature{grid-row:auto;min-height:430px}
+}
+@media (max-width:760px){
+  .home-hero{padding-top:42px}
+  .home-intro h1{font-size:clamp(3.7rem,18vw,6rem)}
+  .home-strip{grid-template-columns:1fr 1fr}
+  .home-section-head h2{font-size:clamp(2.6rem,12vw,4.2rem)}
+  .bento-grid{grid-template-columns:1fr}
+  .bento-card,.bento-feature{min-height:350px}
+  .statement-card{padding:26px}
+  .focus-panel{padding:22px}
+}
