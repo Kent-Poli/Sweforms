@@ -36,3 +36,19 @@ if (offerForm) {
     window.location.href = `mailto:offert@sweforms.se?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 }
+
+
+const formMachine = document.getElementById('formMachine');
+if (formMachine && window.matchMedia('(pointer:fine)').matches) {
+  formMachine.addEventListener('pointermove', (e) => {
+    const r = formMachine.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width - 0.5) * 18;
+    const y = ((e.clientY - r.top) / r.height - 0.5) * 14;
+    formMachine.style.setProperty('--mx', x + 'px');
+    formMachine.style.setProperty('--my', y + 'px');
+  });
+  formMachine.addEventListener('pointerleave', () => {
+    formMachine.style.setProperty('--mx', '0px');
+    formMachine.style.setProperty('--my', '0px');
+  });
+}
