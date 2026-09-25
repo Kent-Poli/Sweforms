@@ -39,20 +39,56 @@ if (offerForm) {
 
 
 const kineticBanner = document.getElementById('kineticBanner');
-if (kineticBanner && window.matchMedia('(pointer:fine)').matches) {
-  kineticBanner.addEventListener('pointermove', (e) => {
-    const r = kineticBanner.getBoundingClientRect();
-    const nx = (e.clientX - r.left) / r.width;
-    const ny = (e.clientY - r.top) / r.height;
-    kineticBanner.style.setProperty('--kx', ((nx - 0.5) * 20).toFixed(2) + 'px');
-    kineticBanner.style.setProperty('--ky', ((ny - 0.5) * 14).toFixed(2) + 'px');
-    kineticBanner.style.setProperty('--px', (nx * 100).toFixed(1) + '%');
-    kineticBanner.style.setProperty('--py', (ny * 100).toFixed(1) + '%');
-  });
-  kineticBanner.addEventListener('pointerleave', () => {
-    kineticBanner.style.setProperty('--kx', '0px');
-    kineticBanner.style.setProperty('--ky', '0px');
-    kineticBanner.style.setProperty('--px', '50%');
-    kineticBanner.style.setProperty('--py', '50%');
+if (kineticBanner) {
+  const trackA = kineticBanner.querySelector('.kinetic-marquee-a .kinetic-track');
+  const trackB = kineticBanner.querySelector('.kinetic-marquee-b .kinetic-track');
+  let motionFrame = 0;
+  let motionStartedAt = 0;
+
+  const runKineticMotion = (time) => {
+    if (!motionStartedAt) motionStartedAt = time;
+    const elapsed = time - motionStartedAt;
+
+    if (trackA) {
+      const progressA = (elapsed % 23000) / 23000;
+      trackA.style.transform = 'translate3d(' + (-50 * progressA) + '%,0,0)';
+    }
+
+    if (trackB) {
+      const progressB = (elapsed % 31000) / 31000;
+      trackB.style.transform = 'translate3d(' + (-50 + 50 * progressB) + '%,0,0)';
+    }
+
+    motionFrame = requestAnimationFrame(runKineticMotion);
+  };
+
+  motionFrame = requestAnimationFrame(runKineticMotion);
+
+  if (window.matchMedia('(pointer:fine)').matches) {
+    kineticBanner.addEventListener('pointermove', (e) => {
+      const r = kineticBanner.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width;
+      const ny = (e.clientY - r.top) / r.height;
+      kineticBanner.style.setProperty('--kx', ((nx - 0.5) * 20).toFixed(2) + 'px');
+      kineticBanner.style.setProperty('--ky', ((ny - 0.5) * 14).toFixed(2) + 'px');
+      kineticBanner.style.setProperty('--px', (nx * 100).toFixed(1) + '%');
+      kineticBanner.style.setProperty('--py', (ny * 100).toFixed(1) + '%');
+    });
+    kineticBanner.addEventListener('pointerleave', () => {
+      kineticBanner.style.setProperty('--kx', '0px');
+      kineticBanner.style.setProperty('--ky', '0px');
+      kineticBanner.style.setProperty('--px', '50%');
+      kineticBanner.style.setProperty('--py', '50%');
+    });
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      cancelAnimationFrame(motionFrame);
+      motionFrame = 0;
+    } else if (!motionFrame) {
+      motionStartedAt = 0;
+      motionFrame = requestAnimationFrame(runKineticMotion);
+    }
   });
 }
