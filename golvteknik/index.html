@@ -51,6 +51,18 @@
     .gt-economy-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
     .gt-economy-item{padding:16px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
     .gt-economy-item strong{display:block;color:var(--text);margin-bottom:5px}
+    .gt-trust{padding:34px;border-radius:28px;border:1px solid rgba(126,216,154,.26);background:
+      linear-gradient(145deg,rgba(126,216,154,.07),rgba(255,255,255,.018))}
+    .gt-trust-head{display:grid;grid-template-columns:1fr .82fr;gap:26px;align-items:end}
+    .gt-trust-head h2{font-size:clamp(2.3rem,4.8vw,4.3rem);max-width:12ch}
+    .gt-trust-head p{max-width:60ch;justify-self:end}
+    .gt-trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px}
+    .gt-trust-card{padding:20px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.022)}
+    .gt-trust-card span{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(126,216,154,.10);color:var(--gold);font-size:.78rem;font-weight:800}
+    .gt-trust-card h3{font-size:1.18rem;margin:14px 0 7px}
+    .gt-trust-card p{margin:0}
+    .gt-promise{margin-top:18px;padding:17px 18px;border-left:3px solid var(--gold);background:rgba(126,216,154,.045);color:#c7d3ca;border-radius:0 14px 14px 0}
+    .gt-promise strong{color:var(--text)}
     .gt-meta{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0}
     .gt-meta span{padding:8px 11px;border:1px solid var(--line);border-radius:999px;color:#b9c7bd;font-size:.82rem;background:rgba(255,255,255,.025)}
     .gt-note{font-size:.86rem;color:#8fa095;margin-top:12px}
@@ -97,7 +109,9 @@
     @media(max-width:760px){
       .gt-header .brand img{width:145px;max-height:44px}
       .gt-hero{padding:52px 0 32px}
-      .gt-package-grid,.gt-steps,.gt-client-grid,.gt-value-grid,.gt-economy-list{grid-template-columns:1fr}
+      .gt-package-grid,.gt-steps,.gt-client-grid,.gt-value-grid,.gt-economy-list,.gt-trust-grid{grid-template-columns:1fr}
+      .gt-trust-head{grid-template-columns:1fr}
+      .gt-trust-head p{justify-self:start}
       .gt-package{min-height:auto}
       .gt-cta{padding:28px}
     }
@@ -125,9 +139,9 @@
     <div class="container gt-hero-grid">
       <div class="gt-hero-copy reveal">
         <span class="gt-kicker">SF Golvteknik · B2B</span>
-        <h1>Rätt underlag. Rätt nivå. Innan golvet läggs.</h1>
-        <p class="lead">Golvtekniskt stöd för bygg-, golv- och fastighetsföretag. Jag hjälper er att hitta riskerna innan de blir omarbete, stillestånd eller onödiga materialkostnader.</p>
-        <p class="gt-mantra">Ni lägger golvet. Jag hjälper er att skydda marginalen.</p>
+        <h1>Rätt underlag. Tydligt besked. Tryggare beslut.</h1>
+        <p class="lead">När ni är osäkra på nivåer, underlag eller hur golvet bör förberedas får ni en erfaren person på plats som mäter, bedömer och förklarar vad som faktiskt behöver göras.</p>
+        <p class="gt-mantra">Ni ska kunna gå vidare och känna att ni vet varför.</p>
         <div class="gt-meta">
           <span>Avvägning</span>
           <span>Underlagsbedömning</span>
@@ -142,18 +156,18 @@
 
       <aside class="gt-offer-preview reveal">
         <div>
-          <small>Varför ta in SF Golvteknik?</small>
-          <h2>För att dyra beslut ofta tas innan golvet ens är lagt.</h2>
-          <p>Min uppgift är att ge er bättre kontroll innan ni binder material, personal och tid i en lösning.</p>
+          <small>Vad får ni av mig?</small>
+          <h2>Ett lugnt, praktiskt besked innan ni går vidare.</h2>
+          <p>Jag kommer inte in för att göra projektet större. Jag kommer in för att reda ut frågetecknen och ge er ett tydligt nästa steg.</p>
           <div class="gt-value-callout">
-            <strong>När kan jag löna mig?</strong>
-            <span>Om min insats hjälper er att undvika extra avjämning, ett felaktigt materialval, omarbete, ett produktionsstopp eller att er egen personal står och felsöker i onödan.</span>
+            <strong>Ni ska veta tre saker när jag går.</strong>
+            <span>Vad jag har sett. Vad jag bedömer behöver göras. Och vad ni sannolikt inte behöver lägga tid eller pengar på.</span>
           </div>
           <ul class="bullets">
-            <li>Bättre beslutsunderlag före offert och start</li>
-            <li>Mindre risk för fel och omarbete</li>
-            <li>Bättre kontroll på material och nivåer</li>
-            <li>Er egen personal kan fokusera på produktionen</li>
+            <li>Tydlig avgränsning innan besöket</li>
+            <li>Praktisk bedömning på plats</li>
+            <li>Rak förklaring utan onödigt fackspråk</li>
+            <li>Ett tydligt rekommenderat nästa steg</li>
           </ul>
         </div>
         <p class="gt-note">Utgår från Västerås och arbetar inom cirka 15 mil.</p>
@@ -161,14 +175,53 @@
     </div>
   </section>
 
+  <section class="gt-section">
+    <div class="container">
+      <article class="gt-trust reveal">
+        <div class="gt-trust-head">
+          <div>
+            <span class="eyebrow">Så ska det kännas att ta in hjälp</span>
+            <h2>Ni ska få mer klarhet – inte fler frågetecken.</h2>
+          </div>
+          <p>Det ska vara enkelt att ta in SF Golvteknik även om ni ännu inte vet exakt vad problemet är. Vi börjar med frågan ni behöver få svar på och håller uppdraget så smalt som det går.</p>
+        </div>
+
+        <div class="gt-trust-grid">
+          <div class="gt-trust-card">
+            <span>01</span>
+            <h3>Tydligt före besöket</h3>
+            <p>Vi stämmer av vad ni behöver hjälp med så att ni vet vad jag kommer för att undersöka.</p>
+          </div>
+          <div class="gt-trust-card">
+            <span>02</span>
+            <h3>Lugnt på plats</h3>
+            <p>Jag mäter, tittar och går igenom problemet tillsammans med er utan att stressa fram en lösning.</p>
+          </div>
+          <div class="gt-trust-card">
+            <span>03</span>
+            <h3>Ärligt besked</h3>
+            <p>Om något inte behöver göras säger jag det. Om något kräver annan kompetens säger jag det också.</p>
+          </div>
+          <div class="gt-trust-card">
+            <span>04</span>
+            <h3>Tydligt efteråt</h3>
+            <p>Ni får en rekommendation som går att använda för nästa beslut, nästa yrkesgrupp eller nästa steg i produktionen.</p>
+          </div>
+        </div>
+
+        <div class="gt-promise"><strong>Grundprincip:</strong> Jag ska hjälpa er att fatta ett bättre beslut – inte sälja fler timmar än projektet behöver.</div>
+      </article>
+    </div>
+  </section>
+
   <section class="gt-section" id="erbjudande">
     <div class="container">
       <div class="gt-section-head reveal">
         <div>
-          <span class="eyebrow">Så skapar tjänsten värde</span>
-          <h2>Pengarna finns i det ni slipper göra om.</h2>
+          <span class="eyebrow">När trygghet också blir ekonomi</span>
+          <h2>Ett bättre beslut före start kan spara mycket efteråt.</h2>
         </div>
-        <p>SF Golvteknik går in före eller under produktionen där en felbedömning kan bli dyr. Målet är inte fler konsulttimmar – målet är bättre marginal i projektet.</p>
+        <p>När nivåer och underlag är tydligare blir det lättare att sätta rätt pris, välja rätt lösning och planera arbetet utan onödiga överraskningar.</p>
       </div>
 
       <div class="gt-value-grid">
@@ -249,8 +302,8 @@
   <section class="gt-section">
     <div class="container">
       <article class="gt-economy reveal">
-        <span class="eyebrow">Ekonomin i ett platsbesök</span>
-        <h2>Jag behöver inte spara mycket för att vara värd att ta in.</h2>
+        <span class="eyebrow">Vad ett tidigt besked kan vara värt</span>
+        <h2>Små fel före start kan bli stora kostnader senare.</h2>
         <p>Ett golvprojekt kan tappa marginal genom många små saker: för mycket avjämningsmassa, fel nivå vid en dörr, ett extra arbetsmoment, väntetid eller att fel person står och försöker lösa ett tekniskt problem.</p>
         <div class="gt-economy-list">
           <div class="gt-economy-item">
@@ -338,8 +391,8 @@
       <div class="gt-cta reveal">
         <div>
           <span class="eyebrow">Nästa steg</span>
-          <h2>Skicka projektet innan ni bestämmer lösningen.</h2>
-          <p>Maila ort, ungefärlig yta och gärna bilder eller ritning. Jag återkommer med vilket upplägg som är rimligt och vad som behöver göras för att minska risk och kostnad i projektet.</p>
+          <h2>Börja med frågan ni behöver få svar på.</h2>
+          <p>Maila ort, ungefärlig yta och gärna bilder eller ritning. Ni behöver inte veta vilken tjänst ni ska boka. Jag tittar på underlaget och säger vilket nästa steg som verkar rimligt – eller om ett platsbesök inte behövs.</p>
         </div>
         <div class="buttons">
           <a class="btn btn-primary" href="mailto:offert@sweforms.se?subject=Förfrågan%20SF%20Golvteknik&body=Företag:%0AOrt:%0AYta:%0AKort%20beskrivning:%0A">Beskriv projektet</a>
