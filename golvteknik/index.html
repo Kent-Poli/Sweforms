@@ -4,33 +4,103 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SF Golvteknik | Sweforms</title>
-  <meta name="description" content="SF Golvteknik hjälper bygg-, golv- och fastighetsföretag med avvägning, underlagsbedömning, nivåplanering, golvuppbyggnad, avjämningsplanering och produktionsstöd." />
+  <meta name="description" content="Golvteknisk platskontroll för bygg-, golv- och fastighetsföretag. Avvägning, underlagsbedömning, nivåplanering och produktionsstöd från Västerås." />
   <meta name="robots" content="index,follow" />
-  <meta name="theme-color" content="#0b0b0d" />
+  <meta name="theme-color" content="#07100b" />
   <link rel="canonical" href="https://sweforms.se/golvteknik/" />
   <meta property="og:title" content="SF Golvteknik | Sweforms" />
-  <meta property="og:description" content="Rätt underlag innan golvet läggs. Golvtekniskt stöd för bygg-, golv- och fastighetsföretag." />
+  <meta property="og:description" content="Rätt underlag. Rätt nivå. Innan golvet läggs." />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="sv_SE" />
-  <meta property="og:image" content="../spackel-room.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .gt-page{background:
+      radial-gradient(circle at 82% 8%,rgba(126,216,154,.11),transparent 24%),
+      linear-gradient(180deg,#07100b 0%,#0b1510 100%)}
+    .gt-header .brand img{display:block;width:174px;max-height:48px;object-fit:contain}
+    .gt-header .brand{display:flex;align-items:center}
+    .gt-hero{padding:82px 0 54px}
+    .gt-hero-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:22px;align-items:stretch}
+    .gt-hero-copy{padding:18px 0}
+    .gt-kicker{display:inline-flex;align-items:center;gap:9px;color:#9fb4a5;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:20px}
+    .gt-kicker:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 5px rgba(126,216,154,.08)}
+    .gt-hero h1{font-size:clamp(3.3rem,7.4vw,7rem);max-width:11ch;margin-bottom:24px}
+    .gt-hero .lead{font-size:clamp(1.08rem,1.55vw,1.28rem);max-width:62ch}
+    .gt-mantra{font-size:clamp(1.35rem,2.2vw,2rem);color:var(--text);font-weight:700;letter-spacing:-.03em;margin:30px 0 0}
+    .gt-offer-preview{padding:30px;border-radius:28px;border:1px solid rgba(126,216,154,.25);background:
+      radial-gradient(circle at 90% 10%,rgba(126,216,154,.14),transparent 32%),
+      linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+      box-shadow:0 28px 90px rgba(0,0,0,.32);display:flex;flex-direction:column;justify-content:space-between}
+    .gt-offer-preview small{color:var(--gold);text-transform:uppercase;letter-spacing:.12em}
+    .gt-offer-preview h2{font-size:clamp(2rem,4vw,3.5rem);margin-top:12px}
+    .gt-price{display:flex;align-items:flex-end;gap:10px;margin:24px 0 18px}
+    .gt-price strong{font-size:clamp(2.7rem,5vw,4.8rem);line-height:.9;letter-spacing:-.06em;color:var(--text)}
+    .gt-price span{color:var(--muted);margin-bottom:6px}
+    .gt-meta{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0}
+    .gt-meta span{padding:8px 11px;border:1px solid var(--line);border-radius:999px;color:#b9c7bd;font-size:.82rem;background:rgba(255,255,255,.025)}
+    .gt-note{font-size:.86rem;color:#8fa095;margin-top:12px}
+    .gt-section{padding:64px 0}
+    .gt-section-head{display:grid;grid-template-columns:1fr .8fr;gap:30px;align-items:end;margin-bottom:28px}
+    .gt-section-head h2{font-size:clamp(2.4rem,5vw,4.7rem);max-width:11ch}
+    .gt-section-head p{max-width:58ch;justify-self:end}
+    .gt-package-grid{display:grid;grid-template-columns:1.2fr .9fr .9fr;gap:16px}
+    .gt-package{position:relative;min-height:420px;padding:28px;border:1px solid var(--line);border-radius:26px;background:rgba(255,255,255,.024);display:flex;flex-direction:column}
+    .gt-package.primary{border-color:rgba(126,216,154,.32);background:
+      radial-gradient(circle at 84% 10%,rgba(126,216,154,.13),transparent 31%),
+      linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.018))}
+    .gt-package-tag{display:flex;justify-content:space-between;gap:12px;color:#8fa095;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}
+    .gt-package-tag strong{color:var(--gold);font-weight:700}
+    .gt-package h3{font-size:clamp(1.8rem,3vw,2.8rem);margin:28px 0 12px}
+    .gt-package .package-price{font-size:1.45rem;font-weight:800;color:var(--text);margin:4px 0 18px}
+    .gt-package ul{list-style:none;margin:4px 0 24px;padding:0;display:grid;gap:10px}
+    .gt-package li{position:relative;padding-left:18px;color:#bdc9c0}
+    .gt-package li:before{content:"";position:absolute;left:0;top:.75em;width:7px;height:7px;border-radius:50%;background:var(--gold);transform:translateY(-50%)}
+    .gt-package .btn{margin-top:auto}
+    .gt-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .gt-step{padding:26px;border-top:1px solid rgba(126,216,154,.24);background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)}
+    .gt-step span{color:var(--gold);font-size:.72rem;letter-spacing:.12em}
+    .gt-step h3{font-size:1.45rem;margin-top:16px}
+    .gt-audience{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .gt-panel{padding:30px;border:1px solid var(--line);border-radius:26px;background:rgba(255,255,255,.022)}
+    .gt-panel h2{font-size:clamp(2rem,4vw,3.4rem)}
+    .gt-client-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:22px}
+    .gt-client{padding:14px;border:1px solid var(--line);border-radius:16px;color:#bdc9c0;background:rgba(255,255,255,.02)}
+    .gt-scope{display:grid;gap:11px;margin-top:20px}
+    .gt-scope div{display:flex;gap:12px;align-items:flex-start;color:#bdc9c0}
+    .gt-scope b{color:var(--gold)}
+    .gt-cta{padding:42px;border:1px solid rgba(126,216,154,.28);border-radius:30px;background:
+      radial-gradient(circle at 15% 20%,rgba(126,216,154,.12),transparent 30%),
+      linear-gradient(120deg,rgba(255,255,255,.035),rgba(255,255,255,.012));display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+    .gt-cta h2{font-size:clamp(2.4rem,5vw,4.6rem);max-width:12ch}
+    .gt-cta p{max-width:62ch}
+    @media(max-width:1050px){
+      .gt-hero-grid,.gt-section-head,.gt-audience,.gt-cta{grid-template-columns:1fr}
+      .gt-package-grid{grid-template-columns:1fr 1fr}
+      .gt-package.primary{grid-column:1/-1}
+      .gt-section-head p{justify-self:start}
+    }
+    @media(max-width:760px){
+      .gt-header .brand img{width:145px;max-height:44px}
+      .gt-hero{padding:52px 0 32px}
+      .gt-package-grid,.gt-steps,.gt-client-grid{grid-template-columns:1fr}
+      .gt-package{min-height:auto}
+      .gt-cta{padding:28px}
+    }
+  </style>
 </head>
-<body>
-<header class="site-header">
+<body class="gt-page">
+
+<header class="site-header gt-header">
   <div class="container header-inner">
     <a href="../" class="brand" aria-label="Sweforms startsida">
-      <span class="brand-mark">Sweforms</span>
-      <span class="brand-sub">Kreativt • Bygg • Golvteknik</span>
+      <img src="../images/sweforms-logo-header.webp" alt="Sweforms" />
     </a>
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">Meny</button>
     <nav class="site-nav" id="siteNav" aria-label="Huvudmeny">
-      <a href="../">Hem</a>
-      <a href="../kreativt/">Kreativt</a>
-      <a href="../maleri/">Måleri</a>
-      <a href="../avjamning-betong/">Avjämning & betong</a>
+      <a href="../bygg/">Bygg</a>
       <a href="./" class="active">Golvteknik</a>
       <a href="../om.html">Om</a>
       <a href="../offert.html" class="cta">Kontakt</a>
@@ -39,158 +109,210 @@
 </header>
 
 <main>
-<section class="hero">
-  <div class="container grid grid-2">
-    <article class="image-card reveal">
-      <img src="../spackel-room.png" alt="Golv- och avjämningsarbete i en byggmiljö" />
-      <div class="overlay">
-        <strong>SF Golvteknik</strong>
-        <span>Mätning, bedömning och stöd innan nästa steg i golvprojektet.</span>
+  <section class="gt-hero">
+    <div class="container gt-hero-grid">
+      <div class="gt-hero-copy reveal">
+        <span class="gt-kicker">SF Golvteknik · B2B</span>
+        <h1>Rätt underlag. Rätt nivå. Innan golvet läggs.</h1>
+        <p class="lead">Golvtekniskt stöd för bygg-, golv- och fastighetsföretag. Jag hjälper er att få kontroll på underlaget innan nästa steg i projektet.</p>
+        <p class="gt-mantra">Ni lägger golvet. Jag ser till att underlaget är rätt.</p>
+        <div class="gt-meta">
+          <span>Avvägning</span>
+          <span>Underlagsbedömning</span>
+          <span>Nivåplanering</span>
+          <span>Produktionsstöd</span>
+        </div>
+        <div class="buttons">
+          <a class="btn btn-primary" href="mailto:offert@sweforms.se?subject=Förfrågan%20SF%20Golvteknik&body=Företag:%0AOrt:%0AYta:%0AKort%20beskrivning:%0A">Beskriv projektet</a>
+          <a class="btn btn-secondary" href="#erbjudande">Se erbjudandet</a>
+        </div>
       </div>
-    </article>
 
-    <article class="copy-card reveal">
-      <span class="eyebrow">SF Golvteknik</span>
-      <h1>Rätt underlag innan golvet läggs.</h1>
-      <p class="lead">Golvtekniskt stöd för bygg-, golv- och fastighetsföretag. Jag hjälper er att mäta, bedöma och planera underlaget innan golvläggningen går vidare.</p>
-      <p>Fokus ligger på avvägning, nivåer, golvuppbyggnad, avjämningsbehov och praktiskt produktionsstöd. Ni får ett tydligare beslutsunderlag utan att behöva ta in en full golventreprenad.</p>
-      <div class="badges">
-        <span class="badge">B2B</span>
-        <span class="badge">Västerås + ca 15 mil</span>
-        <span class="badge">F-skatt</span>
-      </div>
-      <div class="buttons">
-        <a class="btn btn-primary" href="mailto:offert@sweforms.se?subject=Förfrågan%20SF%20Golvteknik">Beskriv projektet</a>
-        <a class="btn btn-secondary" href="tel:+46738224040">Ring 073-822 40 40</a>
-      </div>
-    </article>
-  </div>
-</section>
-
-<section>
-  <div class="container">
-    <div class="section-head reveal">
-      <div>
-        <span class="eyebrow">Tjänster</span>
-        <h2>Hjälp där underlaget avgör nästa steg.</h2>
-      </div>
-      <p>Tjänsterna kan användas var för sig eller kombineras i samma projekt. Målet är att ge er rätt nivåer, rätt arbetsgång och färre överraskningar innan golvet läggs.</p>
+      <aside class="gt-offer-preview reveal">
+        <div>
+          <small>Huvuderbjudande</small>
+          <h2>Golvteknisk platskontroll</h2>
+          <p>En praktisk kontroll på plats när ni behöver veta vad underlaget kräver innan golvläggning, offert eller avjämning.</p>
+          <div class="gt-price">
+            <strong>3 490 kr</strong>
+            <span>från · exkl. moms</span>
+          </div>
+          <ul class="bullets">
+            <li>Laseravvägning och nivåkontroll</li>
+            <li>Praktisk bedömning av underlaget</li>
+            <li>Kontroll av nivåer och kritiska övergångar</li>
+            <li>Kort rekommendation om nästa steg</li>
+          </ul>
+        </div>
+        <p class="gt-note">Utgår från Västerås. Resa utanför Västerås tillkommer och bekräftas före bokning.</p>
+      </aside>
     </div>
+  </section>
 
-    <div class="grid grid-3">
-      <article class="card service reveal">
-        <h3>Avvägning & nivåkontroll</h3>
-        <p>Laseravvägning av golv med fokus på höga och låga punkter, nivåskillnader och kritiska övergångar.</p>
-      </article>
+  <section class="gt-section" id="erbjudande">
+    <div class="container">
+      <div class="gt-section-head reveal">
+        <div>
+          <span class="eyebrow">Erbjudandet</span>
+          <h2>Tre tydliga sätt att ta in hjälp.</h2>
+        </div>
+        <p>Ni behöver inte köpa en hel golventreprenad. SF Golvteknik kan gå in just där ni behöver mätning, ett bättre beslutsunderlag eller erfarenhet på plats.</p>
+      </div>
 
-      <article class="card service reveal">
-        <h3>Underlagsbedömning</h3>
-        <p>Praktisk bedömning av vad som behöver göras med underlaget innan nästa moment eller golvbeläggning.</p>
-      </article>
+      <div class="gt-package-grid">
+        <article class="gt-package primary reveal">
+          <div class="gt-package-tag"><strong>01 · Börja här</strong><span>Platsbesök</span></div>
+          <h3>Golvteknisk platskontroll</h3>
+          <div class="package-price">Från 3 490 kr exkl. moms</div>
+          <p>För projekt där ni behöver veta vad underlaget faktiskt kräver innan nästa moment.</p>
+          <ul>
+            <li>Laseravvägning av relevanta ytor</li>
+            <li>Höga och låga punkter</li>
+            <li>Nivåskillnader och övergångar</li>
+            <li>Praktisk underlagsbedömning</li>
+            <li>Bedömning av avjämningsbehov</li>
+            <li>Kort skriftlig sammanfattning med rekommenderat nästa steg</li>
+          </ul>
+          <a class="btn btn-primary" href="mailto:offert@sweforms.se?subject=Boka%20golvteknisk%20platskontroll">Boka platskontroll</a>
+        </article>
 
-      <article class="card service reveal">
-        <h3>Nivåplanering</h3>
-        <p>Planering av färdiga nivåer, anslutningar, dörrpassager och lämpliga avjämningstjocklekar.</p>
-      </article>
+        <article class="gt-package reveal">
+          <div class="gt-package-tag"><strong>02</strong><span>Planering</span></div>
+          <h3>Nivå- & avjämningsplan</h3>
+          <div class="package-price">Från 4 490 kr exkl. moms</div>
+          <p>När ni behöver gå från mätning till en tydligare plan för nivåer och avjämning.</p>
+          <ul>
+            <li>Nivåplanering och färdiga höjder</li>
+            <li>Kritiska anslutningar och dörrpassager</li>
+            <li>Princip för golvuppbyggnad</li>
+            <li>Bedömning av avjämningstjocklek</li>
+            <li>Underlag för material- och produktionsplanering</li>
+          </ul>
+          <a class="btn btn-secondary" href="mailto:offert@sweforms.se?subject=Förfrågan%20nivå-%20och%20avjämningsplan">Fråga om planering</a>
+        </article>
 
-      <article class="card service reveal">
-        <h3>Golvuppbyggnad</h3>
-        <p>Rådgivning kring principen för uppbyggnaden från befintligt underlag fram till rätt nivå inför färdigt golv.</p>
-      </article>
-
-      <article class="card service reveal">
-        <h3>Avjämningsplanering</h3>
-        <p>Stöd kring ytor, materialmängder, arbetsordning och hur avjämningsarbetet kan läggas upp praktiskt.</p>
-      </article>
-
-      <article class="card service reveal">
-        <h3>Produktionsstöd</h3>
-        <p>Er personal utför arbetet. Jag kan finnas på plats och stötta med nivåer, arbetsgång och problemlösning.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="container">
-    <div class="section-head reveal">
-      <div>
-        <span class="eyebrow">När passar det?</span>
-        <h2>Tre vanliga lägen.</h2>
+        <article class="gt-package reveal">
+          <div class="gt-package-tag"><strong>03</strong><span>På plats</span></div>
+          <h3>Produktionsstöd</h3>
+          <div class="package-price">995 kr/tim exkl. moms</div>
+          <p>Er personal utför arbetet. Jag stöttar med nivåer, ordning, startpunkt och praktisk problemlösning.</p>
+          <ul>
+            <li>Stöd inför och under avjämning</li>
+            <li>Nivåer och arbetsordning</li>
+            <li>Praktisk problemlösning</li>
+            <li>Stöd vid större eller ovanliga ytor</li>
+            <li>Minsta bokning: 4 timmar</li>
+          </ul>
+          <a class="btn btn-secondary" href="mailto:offert@sweforms.se?subject=Förfrågan%20produktionsstöd%20golv">Boka produktionsstöd</a>
+        </article>
       </div>
     </div>
-    <div class="grid grid-3">
-      <article class="card service reveal">
-        <h3>Inför offert</h3>
-        <p>Ni behöver veta vad underlaget faktiskt kräver innan ni sätter pris på nästa del av projektet.</p>
+  </section>
+
+  <section class="gt-section">
+    <div class="container">
+      <div class="gt-section-head reveal">
+        <div>
+          <span class="eyebrow">När passar tjänsten?</span>
+          <h2>När underlaget är frågetecknet.</h2>
+        </div>
+        <p>Framför allt när ni behöver fatta beslut innan någon börjar lägga golv, spackla stora ytor eller prissätta ett jobb där underlaget är osäkert.</p>
+      </div>
+
+      <div class="gt-steps">
+        <article class="gt-step reveal">
+          <span>01 / INFÖR OFFERT</span>
+          <h3>Vad kräver golvet?</h3>
+          <p>Ni behöver bättre koll på nivåer, uppbyggnad och avjämningsbehov innan ni sätter pris.</p>
+        </article>
+        <article class="gt-step reveal">
+          <span>02 / INFÖR GOLVLÄGGNING</span>
+          <h3>Är underlaget redo?</h3>
+          <p>Ni vill minska risken för överraskningar i övergångar, dörrar och färdiga nivåer.</p>
+        </article>
+        <article class="gt-step reveal">
+          <span>03 / NÄR DET KÖRT FAST</span>
+          <h3>Vad är nästa steg?</h3>
+          <p>Nivåerna stämmer inte eller lösningen är oklar och ni behöver en erfaren person som ser problemet på plats.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="gt-section">
+    <div class="container gt-audience">
+      <article class="gt-panel reveal">
+        <span class="eyebrow">För vem?</span>
+        <h2>Byggföretag som behöver golvkompetensen – inte en hel golventreprenad.</h2>
+        <div class="gt-client-grid">
+          <div class="gt-client">Golvföretag</div>
+          <div class="gt-client">Byggföretag</div>
+          <div class="gt-client">Plattsättare</div>
+          <div class="gt-client">Fastighetsbolag</div>
+          <div class="gt-client">Avjämningsföretag</div>
+          <div class="gt-client">Projekt- och arbetsledning</div>
+        </div>
       </article>
-      <article class="card service reveal">
-        <h3>Inför golvläggning</h3>
-        <p>Ni vill få bättre kontroll på nivåer, avjämningsbehov och övergångar innan golvläggaren startar.</p>
-      </article>
-      <article class="card service reveal">
-        <h3>När projektet kört fast</h3>
-        <p>Nivåerna stämmer inte, lösningen är oklar eller ni behöver en erfaren person som ser problemet på plats.</p>
+
+      <article class="gt-panel reveal">
+        <span class="eyebrow">Arbetsområde & avgränsning</span>
+        <h2>Västerås + cirka 15 mil.</h2>
+        <p>SF Golvteknik utgår från Västerås och tar uppdrag i Mälardalen och närliggande områden när projektet motiverar resan.</p>
+        <div class="gt-scope">
+          <div><b>✓</b><span>Praktisk erfarenhet av avjämning och golvförberedelse.</span></div>
+          <div><b>✓</b><span>Tekniskt och produktionsnära stöd – inte vanlig golvläggning.</span></div>
+          <div><b>✓</b><span>Resa utanför Västerås prissätts separat och bekräftas innan bokning.</span></div>
+          <div><b>i</b><span>Vid behov kan fuktmätning samordnas separat. Tjänsten ersätter inte behörig fuktmätning eller formell besiktning när sådan krävs.</span></div>
+        </div>
       </article>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <div class="container grid grid-2">
-    <article class="card service reveal">
-      <span class="eyebrow">Så går det till</span>
-      <h2>Enkelt från första kontakt.</h2>
-      <ul class="bullets">
-        <li>Skicka en kort beskrivning, bilder eller ritning om det finns.</li>
-        <li>Vi avgör om frågan kan lösas direkt eller om ett platsbesök behövs.</li>
-        <li>På plats mäter och bedömer jag det som är relevant för projektet.</li>
-        <li>Ni får en tydlig rekommendation om nästa steg.</li>
-      </ul>
-    </article>
-
-    <article class="card service reveal">
-      <span class="eyebrow">Arbetsområde</span>
-      <h2>Västerås + cirka 15 mil.</h2>
-      <p>SF Golvteknik utgår från Västerås och kan ta uppdrag i ett större område när jobbet motiverar resan. Det passar särskilt bra för mätning, rådgivning och produktionsstöd där den tekniska erfarenheten är viktigare än många timmars fysiskt arbete.</p>
-      <div class="buttons">
-        <a class="btn btn-primary" href="mailto:offert@sweforms.se?subject=Förfrågan%20SF%20Golvteknik">Skicka en förfrågan</a>
-        <a class="btn btn-secondary" href="../">Till Sweforms</a>
+  <section class="gt-section">
+    <div class="container">
+      <div class="gt-cta reveal">
+        <div>
+          <span class="eyebrow">Nästa steg</span>
+          <h2>Skicka projektet innan ni bestämmer lösningen.</h2>
+          <p>Maila ort, ungefärlig yta och gärna bilder eller ritning. Jag återkommer med vad som är rimligt nästa steg och ett pris innan något bokas.</p>
+        </div>
+        <div class="buttons">
+          <a class="btn btn-primary" href="mailto:offert@sweforms.se?subject=Förfrågan%20SF%20Golvteknik&body=Företag:%0AOrt:%0AYta:%0AKort%20beskrivning:%0A">Beskriv projektet</a>
+        </div>
       </div>
-    </article>
-  </div>
-</section>
+    </div>
+  </section>
 </main>
 
 <footer class="footer">
   <div class="container">
     <div class="footer-top reveal">
       <div class="footer-col">
-        <div class="brand-mark">Sweforms</div>
-        <div class="brand-sub" style="margin-top:6px;">Kreativt • Bygg • Golvteknik</div>
-        <p style="margin-top:14px; max-width:34ch;">Ett varumärke med fyra tydliga områden: kreativ produktion, måleri, avjämning & betong samt golvteknisk rådgivning.</p>
+        <a href="../" class="brand" aria-label="Sweforms startsida">
+          <img src="../images/sweforms-logo-header.webp" alt="Sweforms" style="width:170px;max-height:48px;object-fit:contain;" />
+        </a>
+        <p style="margin-top:16px;max-width:34ch;">SF Golvteknik – mätning, bedömning och stöd innan golvet läggs.</p>
       </div>
       <div class="footer-col">
-        <h4>Områden</h4>
+        <h4>Golvteknik</h4>
         <div class="footer-links">
-          <a href="../kreativt/">SF Kreativt</a>
-          <a href="../maleri/">SF Måleri</a>
-          <a href="../avjamning-betong/">SF Avjämning & Betong</a>
-          <a href="./">SF Golvteknik</a>
+          <a href="#erbjudande">Platskontroll</a>
+          <a href="#erbjudande">Nivå- & avjämningsplan</a>
+          <a href="#erbjudande">Produktionsstöd</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Sweforms</h4>
+        <div class="footer-links">
+          <a href="../bygg/">Bygg</a>
+          <a href="../form/">Form</a>
+          <a href="../om.html">Om</a>
         </div>
       </div>
       <div class="footer-col">
         <h4>Kontakt</h4>
         <div class="footer-links">
           <a href="mailto:offert@sweforms.se">offert@sweforms.se</a>
-          <a href="mailto:kent@sweforms.se">kent@sweforms.se</a>
-          <a href="tel:+46738224040">073-822 40 40</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h4>Golvteknik</h4>
-        <div class="footer-links">
-          <span>B2B</span>
           <span>Utgår från Västerås</span>
           <span>Ca 15 mils arbetsområde</span>
         </div>
@@ -201,6 +323,7 @@
     </div>
   </div>
 </footer>
+
 <script src="../script.js"></script>
 </body>
 </html>
