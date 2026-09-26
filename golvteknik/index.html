@@ -36,9 +36,21 @@
       box-shadow:0 28px 90px rgba(0,0,0,.32);display:flex;flex-direction:column;justify-content:space-between}
     .gt-offer-preview small{color:var(--gold);text-transform:uppercase;letter-spacing:.12em}
     .gt-offer-preview h2{font-size:clamp(2rem,4vw,3.5rem);margin-top:12px}
-    .gt-price{display:flex;align-items:flex-end;gap:10px;margin:24px 0 18px}
-    .gt-price strong{font-size:clamp(2.7rem,5vw,4.8rem);line-height:.9;letter-spacing:-.06em;color:var(--text)}
-    .gt-price span{color:var(--muted);margin-bottom:6px}
+    .gt-value-callout{margin:24px 0 18px;padding:18px;border-radius:18px;border:1px solid rgba(126,216,154,.22);background:rgba(126,216,154,.055)}
+    .gt-value-callout strong{display:block;color:var(--text);font-size:1.08rem;margin-bottom:6px}
+    .gt-value-callout span{color:#b8c6bc}
+    .gt-value-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
+    .gt-value{padding:22px;border-radius:22px;border:1px solid var(--line);background:rgba(255,255,255,.022)}
+    .gt-value small{color:var(--gold);letter-spacing:.12em;text-transform:uppercase}
+    .gt-value h3{font-size:1.35rem;margin:14px 0 8px}
+    .gt-value p{margin:0}
+    .gt-economy{padding:34px;border-radius:28px;border:1px solid rgba(126,216,154,.28);background:
+      radial-gradient(circle at 88% 10%,rgba(126,216,154,.12),transparent 30%),
+      linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.014))}
+    .gt-economy h2{font-size:clamp(2.2rem,4.5vw,4rem);max-width:13ch}
+    .gt-economy-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+    .gt-economy-item{padding:16px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+    .gt-economy-item strong{display:block;color:var(--text);margin-bottom:5px}
     .gt-meta{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0}
     .gt-meta span{padding:8px 11px;border:1px solid var(--line);border-radius:999px;color:#b9c7bd;font-size:.82rem;background:rgba(255,255,255,.025)}
     .gt-note{font-size:.86rem;color:#8fa095;margin-top:12px}
@@ -54,7 +66,7 @@
     .gt-package-tag{display:flex;justify-content:space-between;gap:12px;color:#8fa095;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}
     .gt-package-tag strong{color:var(--gold);font-weight:700}
     .gt-package h3{font-size:clamp(1.8rem,3vw,2.8rem);margin:28px 0 12px}
-    .gt-package .package-price{font-size:1.45rem;font-weight:800;color:var(--text);margin:4px 0 18px}
+    .gt-package .package-purpose{font-size:1rem;font-weight:700;color:var(--gold);margin:4px 0 18px;text-transform:uppercase;letter-spacing:.08em}
     .gt-package ul{list-style:none;margin:4px 0 24px;padding:0;display:grid;gap:10px}
     .gt-package li{position:relative;padding-left:18px;color:#bdc9c0}
     .gt-package li:before{content:"";position:absolute;left:0;top:.75em;width:7px;height:7px;border-radius:50%;background:var(--gold);transform:translateY(-50%)}
@@ -85,7 +97,7 @@
     @media(max-width:760px){
       .gt-header .brand img{width:145px;max-height:44px}
       .gt-hero{padding:52px 0 32px}
-      .gt-package-grid,.gt-steps,.gt-client-grid{grid-template-columns:1fr}
+      .gt-package-grid,.gt-steps,.gt-client-grid,.gt-value-grid,.gt-economy-list{grid-template-columns:1fr}
       .gt-package{min-height:auto}
       .gt-cta{padding:28px}
     }
@@ -114,8 +126,8 @@
       <div class="gt-hero-copy reveal">
         <span class="gt-kicker">SF Golvteknik · B2B</span>
         <h1>Rätt underlag. Rätt nivå. Innan golvet läggs.</h1>
-        <p class="lead">Golvtekniskt stöd för bygg-, golv- och fastighetsföretag. Jag hjälper er att få kontroll på underlaget innan nästa steg i projektet.</p>
-        <p class="gt-mantra">Ni lägger golvet. Jag ser till att underlaget är rätt.</p>
+        <p class="lead">Golvtekniskt stöd för bygg-, golv- och fastighetsföretag. Jag hjälper er att hitta riskerna innan de blir omarbete, stillestånd eller onödiga materialkostnader.</p>
+        <p class="gt-mantra">Ni lägger golvet. Jag hjälper er att skydda marginalen.</p>
         <div class="gt-meta">
           <span>Avvägning</span>
           <span>Underlagsbedömning</span>
@@ -130,21 +142,21 @@
 
       <aside class="gt-offer-preview reveal">
         <div>
-          <small>Huvuderbjudande</small>
-          <h2>Golvteknisk platskontroll</h2>
-          <p>En praktisk kontroll på plats när ni behöver veta vad underlaget kräver innan golvläggning, offert eller avjämning.</p>
-          <div class="gt-price">
-            <strong>3 490 kr</strong>
-            <span>från · exkl. moms</span>
+          <small>Varför ta in SF Golvteknik?</small>
+          <h2>För att dyra beslut ofta tas innan golvet ens är lagt.</h2>
+          <p>Min uppgift är att ge er bättre kontroll innan ni binder material, personal och tid i en lösning.</p>
+          <div class="gt-value-callout">
+            <strong>När kan jag löna mig?</strong>
+            <span>Om min insats hjälper er att undvika extra avjämning, ett felaktigt materialval, omarbete, ett produktionsstopp eller att er egen personal står och felsöker i onödan.</span>
           </div>
           <ul class="bullets">
-            <li>Laseravvägning och nivåkontroll</li>
-            <li>Praktisk bedömning av underlaget</li>
-            <li>Kontroll av nivåer och kritiska övergångar</li>
-            <li>Kort rekommendation om nästa steg</li>
+            <li>Bättre beslutsunderlag före offert och start</li>
+            <li>Mindre risk för fel och omarbete</li>
+            <li>Bättre kontroll på material och nivåer</li>
+            <li>Er egen personal kan fokusera på produktionen</li>
           </ul>
         </div>
-        <p class="gt-note">Utgår från Västerås. Resa utanför Västerås tillkommer och bekräftas före bokning.</p>
+        <p class="gt-note">Utgår från Västerås och arbetar inom cirka 15 mil.</p>
       </aside>
     </div>
   </section>
@@ -153,17 +165,42 @@
     <div class="container">
       <div class="gt-section-head reveal">
         <div>
-          <span class="eyebrow">Erbjudandet</span>
-          <h2>Tre tydliga sätt att ta in hjälp.</h2>
+          <span class="eyebrow">Så skapar tjänsten värde</span>
+          <h2>Pengarna finns i det ni slipper göra om.</h2>
         </div>
-        <p>Ni behöver inte köpa en hel golventreprenad. SF Golvteknik kan gå in just där ni behöver mätning, ett bättre beslutsunderlag eller erfarenhet på plats.</p>
+        <p>SF Golvteknik går in före eller under produktionen där en felbedömning kan bli dyr. Målet är inte fler konsulttimmar – målet är bättre marginal i projektet.</p>
       </div>
+
+      <div class="gt-value-grid">
+        <article class="gt-value reveal">
+          <small>01 · Kalkyl</small>
+          <h3>Säkrare offert</h3>
+          <p>Ni får bättre koll på nivåer, avjämningsbehov och uppbyggnad innan ni sätter pris – och minskar risken att ta på er kostnader ni inte räknat med.</p>
+        </article>
+        <article class="gt-value reveal">
+          <small>02 · Material</small>
+          <h3>Mindre överförbrukning</h3>
+          <p>Rätt nivåplanering kan minska risken att ni bygger för tjockt, beställer fel mängd eller väljer en onödigt dyr lösning.</p>
+        </article>
+        <article class="gt-value reveal">
+          <small>03 · Produktion</small>
+          <h3>Färre stopp</h3>
+          <p>Problem som upptäcks före start är ofta enklare att lösa än när personal, material och nästa yrkesgrupp redan står på plats.</p>
+        </article>
+        <article class="gt-value reveal">
+          <small>04 · Personal</small>
+          <h3>Rätt person på rätt jobb</h3>
+          <p>Era montörer och arbetsledare kan fortsätta med det de fakturerar för i stället för att lägga tid på mätning, nivåfrågor och felsökning.</p>
+        </article>
+      </div>
+
+      <div style="height:28px"></div>
 
       <div class="gt-package-grid">
         <article class="gt-package primary reveal">
           <div class="gt-package-tag"><strong>01 · Börja här</strong><span>Platsbesök</span></div>
           <h3>Golvteknisk platskontroll</h3>
-          <div class="package-price">Från 3 490 kr exkl. moms</div>
+          <div class="package-purpose">Mät · bedöm · besluta</div>
           <p>För projekt där ni behöver veta vad underlaget faktiskt kräver innan nästa moment.</p>
           <ul>
             <li>Laseravvägning av relevanta ytor</li>
@@ -173,13 +210,13 @@
             <li>Bedömning av avjämningsbehov</li>
             <li>Kort skriftlig sammanfattning med rekommenderat nästa steg</li>
           </ul>
-          <a class="btn btn-primary" href="mailto:offert@sweforms.se?subject=Boka%20golvteknisk%20platskontroll">Boka platskontroll</a>
+          <a class="btn btn-primary" href="mailto:offert@sweforms.se?subject=Boka%20golvteknisk%20platskontroll">Beskriv projektet</a>
         </article>
 
         <article class="gt-package reveal">
           <div class="gt-package-tag"><strong>02</strong><span>Planering</span></div>
           <h3>Nivå- & avjämningsplan</h3>
-          <div class="package-price">Från 4 490 kr exkl. moms</div>
+          <div class="package-purpose">Planera innan produktion</div>
           <p>När ni behöver gå från mätning till en tydligare plan för nivåer och avjämning.</p>
           <ul>
             <li>Nivåplanering och färdiga höjder</li>
@@ -194,18 +231,46 @@
         <article class="gt-package reveal">
           <div class="gt-package-tag"><strong>03</strong><span>På plats</span></div>
           <h3>Produktionsstöd</h3>
-          <div class="package-price">995 kr/tim exkl. moms</div>
+          <div class="package-purpose">Er personal producerar · jag stöttar</div>
           <p>Er personal utför arbetet. Jag stöttar med nivåer, ordning, startpunkt och praktisk problemlösning.</p>
           <ul>
             <li>Stöd inför och under avjämning</li>
             <li>Nivåer och arbetsordning</li>
             <li>Praktisk problemlösning</li>
             <li>Stöd vid större eller ovanliga ytor</li>
-            <li>Minsta bokning: 4 timmar</li>
+            <li>Omfattning anpassas efter projektet</li>
           </ul>
-          <a class="btn btn-secondary" href="mailto:offert@sweforms.se?subject=Förfrågan%20produktionsstöd%20golv">Boka produktionsstöd</a>
+          <a class="btn btn-secondary" href="mailto:offert@sweforms.se?subject=Förfrågan%20produktionsstöd%20golv">Fråga om produktionsstöd</a>
         </article>
       </div>
+    </div>
+  </section>
+
+  <section class="gt-section">
+    <div class="container">
+      <article class="gt-economy reveal">
+        <span class="eyebrow">Ekonomin i ett platsbesök</span>
+        <h2>Jag behöver inte spara mycket för att vara värd att ta in.</h2>
+        <p>Ett golvprojekt kan tappa marginal genom många små saker: för mycket avjämningsmassa, fel nivå vid en dörr, ett extra arbetsmoment, väntetid eller att fel person står och försöker lösa ett tekniskt problem.</p>
+        <div class="gt-economy-list">
+          <div class="gt-economy-item">
+            <strong>Undvik en felbeställning</strong>
+            <span>En bättre mängd- eller nivåbedömning före beställning kan vara mer värd än själva konsultinsatsen.</span>
+          </div>
+          <div class="gt-economy-item">
+            <strong>Undvik en dags omarbete</strong>
+            <span>Om problemet hittas innan golvet eller avjämningen är utförd slipper ni riva, göra om och flytta nästa moment.</span>
+          </div>
+          <div class="gt-economy-item">
+            <strong>Frigör er egen personal</strong>
+            <span>Golv- och byggpersonal kan fortsätta producera i stället för att lägga debiterbar tid på mätning och felsökning.</span>
+          </div>
+          <div class="gt-economy-item">
+            <strong>Sätt ett bättre pris från början</strong>
+            <span>Ett tydligare underlag gör det lättare att prissätta riskerna innan ni lämnar offert i stället för att upptäcka dem efteråt.</span>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -261,7 +326,7 @@
         <div class="gt-scope">
           <div><b>✓</b><span>Praktisk erfarenhet av avjämning och golvförberedelse.</span></div>
           <div><b>✓</b><span>Tekniskt och produktionsnära stöd – inte vanlig golvläggning.</span></div>
-          <div><b>✓</b><span>Resa utanför Västerås prissätts separat och bekräftas innan bokning.</span></div>
+          <div><b>✓</b><span>Resa utanför Västerås och uppdragets omfattning stäms av före bokning.</span></div>
           <div><b>i</b><span>Vid behov kan fuktmätning samordnas separat. Tjänsten ersätter inte behörig fuktmätning eller formell besiktning när sådan krävs.</span></div>
         </div>
       </article>
@@ -274,7 +339,7 @@
         <div>
           <span class="eyebrow">Nästa steg</span>
           <h2>Skicka projektet innan ni bestämmer lösningen.</h2>
-          <p>Maila ort, ungefärlig yta och gärna bilder eller ritning. Jag återkommer med vad som är rimligt nästa steg och ett pris innan något bokas.</p>
+          <p>Maila ort, ungefärlig yta och gärna bilder eller ritning. Jag återkommer med vilket upplägg som är rimligt och vad som behöver göras för att minska risk och kostnad i projektet.</p>
         </div>
         <div class="buttons">
           <a class="btn btn-primary" href="mailto:offert@sweforms.se?subject=Förfrågan%20SF%20Golvteknik&body=Företag:%0AOrt:%0AYta:%0AKort%20beskrivning:%0A">Beskriv projektet</a>
