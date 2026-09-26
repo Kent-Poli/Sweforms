@@ -30,7 +30,7 @@
       background:rgba(7,16,11,.90);backdrop-filter:blur(14px);position:relative;z-index:20
     }
     .portal-brand{display:flex;align-items:center}
-    .portal-brand img{display:block;width:86px;height:auto;border-radius:10px}
+    .portal-brand img{display:block;width:182px;max-height:52px;height:auto;object-fit:contain}
     .portal-about{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 0}
     .portal-about:hover{color:var(--text)}
     .portal-grid{
@@ -95,7 +95,7 @@
     .portal-choice:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}
     @media(max-width:760px){
       body{overflow:auto}
-      .portal-header{height:70px;padding:0 18px}
+      .portal-header{height:70px;padding:0 18px}\n      .portal-brand img{width:150px;max-height:46px}
       .portal-grid{grid-template-columns:1fr;min-height:calc(100vh - 70px)}
       .portal-choice{min-height:46vh;padding:30px 22px}
       .portal-orb{width:150px;height:150px;right:4%;top:12%}
