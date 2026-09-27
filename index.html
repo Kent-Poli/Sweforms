@@ -27,12 +27,16 @@
     .portal-header{
       height:78px;display:flex;align-items:center;justify-content:space-between;
       padding:0 clamp(20px,4vw,56px);border-bottom:1px solid var(--line);
-      background:linear-gradient(90deg,rgba(34,74,54,.96),rgba(24,57,41,.96));backdrop-filter:blur(16px);position:relative;z-index:20;box-shadow:0 10px 32px rgba(0,0,0,.16)
+      background:linear-gradient(90deg,rgba(34,74,54,.96),rgba(24,57,41,.96));backdrop-filter:blur(16px);
+      position:sticky;top:0;z-index:60;box-shadow:0 10px 32px rgba(0,0,0,.16)
     }
     .portal-brand{display:flex;align-items:center}
-    .portal-brand img{display:block;width:182px;max-height:52px;height:auto;object-fit:contain}
-    .portal-about{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:#d7e5db;padding:10px 0}
-    .portal-about:hover{color:var(--text)}
+    .portal-brand img{display:block;width:174px;max-height:48px;height:auto;object-fit:contain}
+    .portal-nav-toggle{display:none;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+    .portal-nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .portal-nav a{padding:10px 14px;border-radius:999px;color:var(--muted);font-size:.86rem;transition:.2s ease}
+    .portal-nav a:hover,.portal-nav a.active{background:rgba(255,255,255,.05);color:var(--text)}
+    .portal-nav a.cta{background:linear-gradient(180deg,var(--gold),#4da96b);color:#07130b;font-weight:800}
     .portal-grid{
       flex:1;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);
       min-height:calc(100vh - 78px)
@@ -96,7 +100,10 @@
     @media(max-width:760px){
       body{overflow:auto}
       .portal-header{height:70px;padding:0 18px}
-      .portal-brand img{width:150px;max-height:46px}
+      .portal-brand img{width:145px;max-height:44px}
+      .portal-nav-toggle{display:inline-flex}
+      .portal-nav{display:none;position:absolute;top:calc(100% + 10px);left:16px;right:16px;padding:12px;border-radius:18px;background:rgba(7,16,11,.98);border:1px solid var(--line);box-shadow:0 24px 80px rgba(0,0,0,.35);flex-direction:column;align-items:stretch}
+      .portal-nav.open{display:flex}
       .portal-grid{grid-template-columns:1fr;min-height:calc(100vh - 70px)}
       .portal-choice{min-height:46vh;padding:30px 22px}
       .portal-orb{width:150px;height:150px;right:4%;top:12%}
@@ -114,7 +121,13 @@
       <a class="portal-brand" href="./" aria-label="Sweforms startsida">
         <img src="images/sweforms-logo-header.webp" alt="Sweforms" />
       </a>
-      <a class="portal-about" href="om.html">Om</a>
+      <button class="portal-nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">Meny</button>
+      <nav class="portal-nav" id="siteNav" aria-label="Huvudmeny">
+        <a href="bygg/">Bygg</a>
+        <a href="form/">Form</a>
+        <a href="om.html">Om</a>
+        <a href="offert.html" class="cta">Kontakt</a>
+      </nav>
     </header>
 
     <main class="portal-grid" aria-label="Välj område">
@@ -141,6 +154,15 @@
   </div>
 
   <script>
+    const navToggle = document.getElementById('navToggle');
+    const siteNav = document.getElementById('siteNav');
+    if (navToggle && siteNav) {
+      navToggle.addEventListener('click', () => {
+        const open = siteNav.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', String(open));
+      });
+    }
+
     document.querySelectorAll('[data-portal-choice]').forEach((choice) => {
       if (!window.matchMedia('(pointer:fine)').matches) return;
       choice.addEventListener('pointermove', (e) => {
