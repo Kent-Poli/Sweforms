@@ -33,7 +33,7 @@ if (offerForm) {
       '',
       g('message') || 'Hej, jag vill veta mer om era tjänster.'
     ].filter(Boolean).join('\n');
-    window.location.href = `mailto:offert@sweforms.se?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:kent@sweforms.se?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 }
 
