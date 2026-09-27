@@ -13,9 +13,13 @@
     body{margin:0;background:linear-gradient(180deg,#07100b,#0b1510);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
     a{color:inherit;text-decoration:none}.wrap{width:min(calc(100% - 32px),1220px);margin:auto}
     header{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,rgba(34,74,54,.96),rgba(24,57,41,.96));backdrop-filter:blur(16px);border-bottom:1px solid var(--line);box-shadow:0 10px 32px rgba(0,0,0,.16)}
-    .head{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-    .brand{display:flex;align-items:center}.brand img{display:block;width:174px;max-height:48px;height:auto;object-fit:contain}.nav{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-    .nav a{color:var(--muted);font-size:.86rem}.nav a:hover{color:var(--text)}
+    .head{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center}.brand img{display:block;width:174px;max-height:48px;height:auto;object-fit:contain}
+    .nav-toggle{display:none;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+    .nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .nav a{padding:10px 14px;border-radius:999px;color:var(--muted);font-size:.86rem;transition:.2s ease}
+    .nav a:hover,.nav a.active{background:rgba(255,255,255,.05);color:var(--text)}
+    .nav a.cta{background:linear-gradient(180deg,var(--gold),#4da96b);color:#07130b;font-weight:800}
     .hero{padding:84px 0 46px}.eyebrow{color:var(--gold);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
     h1{font-size:clamp(3.8rem,10vw,8.5rem);line-height:.85;letter-spacing:-.075em;margin:14px 0 24px}
     .lead{font-size:clamp(1rem,1.7vw,1.25rem);color:#c2cec5;max-width:58ch}
@@ -32,8 +36,12 @@
 <body>
 <header><div class="wrap head">
   <a class="brand" href="../" aria-label="Sweforms startsida"><img src="../images/sweforms-logo-header.webp" alt="Sweforms"></a>
-  <nav class="nav" aria-label="Huvudmeny">
-    <a href="./">Form</a><a href="../bygg/">Bygg</a><a href="../om.html">Om</a><a href="../offert.html">Kontakt</a>
+  <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">Meny</button>
+  <nav class="nav" id="siteNav" aria-label="Huvudmeny">
+    <a href="../bygg/">Bygg</a>
+    <a href="../form/" class="active">Form</a>
+    <a href="../om.html">Om</a>
+    <a href="../offert.html" class="cta">Kontakt</a>
   </nav>
 </div></header>
 <main>
@@ -48,5 +56,10 @@
   </div></section>
 </main>
 <footer><div class="wrap">© <span id="year"></span> Sweforms · <a href="mailto:kent@sweforms.se">kent@sweforms.se</a></div></footer>
-<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+<script>
+const navToggle=document.getElementById('navToggle');
+const siteNav=document.getElementById('siteNav');
+if(navToggle&&siteNav){navToggle.addEventListener('click',()=>{const open=siteNav.classList.toggle('open');navToggle.setAttribute('aria-expanded',String(open));});}
+document.getElementById('year').textContent=new Date().getFullYear();
+</script>
 </body></html>
