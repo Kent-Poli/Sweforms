@@ -1,93 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>3D-print, design & kreativa objekt | SweForms</title>
-  <meta name="description" content="SweForms Form samlar 3D-print, design, objekt och digitalt skapande – från idé till fysisk eller digital form." />
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <style>
-    :root{--bg:#071519;--text:#eef7f8;--muted:#a6bbc0;--gold:#58c4cf;--line:rgba(255,255,255,.09)}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}
-    body{margin:0;background:linear-gradient(180deg,#071519,#0a1c22);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
-    a{color:inherit;text-decoration:none}.wrap{width:min(calc(100% - 32px),1220px);margin:auto}
-    header{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,rgba(14,47,56,.96),rgba(14,47,56,.96));backdrop-filter:blur(16px);border-bottom:1px solid var(--line);box-shadow:0 10px 32px rgba(0,0,0,.16)}
-    .head{width:min(calc(100% - 32px),1240px);margin:auto;min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .brand{display:flex;align-items:center}.brand img{display:block;width:174px;max-height:48px;height:auto;object-fit:contain}
-    .nav-toggle{display:none;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-    .nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-    .nav a{padding:10px 14px;border-radius:999px;color:var(--muted);font-size:.86rem;transition:.2s ease}
-    .nav a:hover,.nav a.active{background:rgba(255,255,255,.05);color:var(--text)}
-    .nav a.cta{background:linear-gradient(180deg,var(--gold),#087e8b);color:#071519;font-weight:800}
-    .hero{padding:84px 0 46px}.eyebrow{color:var(--gold);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
-    h1{font-size:clamp(3.8rem,10vw,8.5rem);line-height:.85;letter-spacing:-.075em;margin:14px 0 24px}
-    .lead{font-size:clamp(1rem,1.7vw,1.25rem);color:#a6bbc0;max-width:58ch}
-    .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;padding:20px 0 84px}
-    .card{position:relative;min-height:320px;padding:28px;border:1px solid var(--line);border-radius:26px;background:rgba(255,255,255,.025);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;transition:.25s ease}
-    .card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 15%,rgba(88,196,207,.13),transparent 34%);opacity:.6;transition:.25s ease}
-    .card:hover{transform:translateY(-5px);border-color:rgba(88,196,207,.34)}.card:hover:before{opacity:1}
-    .card>*{position:relative}.card small{color:var(--gold);letter-spacing:.12em;text-transform:uppercase}.card h2{font-size:clamp(1.8rem,3vw,3rem);line-height:1;margin:12px 0}.card p{color:var(--muted);margin:0}
-    .arrow{position:absolute;top:22px;right:24px;font-size:1.5rem;color:var(--gold)}
-    footer{border-top:1px solid var(--line);padding:24px 0 42px;color:#a6bbc0;font-size:.82rem}
-    @media(max-width:760px){.nav-toggle{display:inline-flex}.nav{display:none;position:absolute;top:calc(100% + 10px);left:16px;right:16px;padding:12px;border-radius:18px;background:rgba(14,47,56,.98);border:1px solid var(--line);box-shadow:0 24px 80px rgba(0,0,0,.35);flex-direction:column;align-items:stretch}.nav.open{display:flex}.cards{grid-template-columns:1fr}.card{min-height:240px}}
-  </style>
-  <meta name="robots" content="index,follow" />
-  <link rel="canonical" href="https://sweforms.se/form/" />
-  <meta property="og:title" content="3D-print, design & kreativa objekt | SweForms" />
-  <meta property="og:description" content="SweForms Form samlar 3D-print, design, objekt och digitalt skapande – från idé till fysisk eller digital form." />
-  <meta property="og:url" content="https://sweforms.se/form/" />
-  <meta property="og:site_name" content="SweForms" />
-  <meta property="og:type" content="website" />
-  <script type="application/ld+json" id="seo-structured-data">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "SweForms",
-      "item": "https://sweforms.se/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Form",
-      "item": "https://sweforms.se/form/"
-    }
-  ]
-}
-  </script>
-<style>.brand img,.portal-brand img,.brand-mark img{background:#fff;border-radius:5px;padding:5px 8px;width:174px;height:58px;max-height:58px;object-fit:contain;display:block} :root{--brand-petrol:#087e8b}</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Studio | SweForms</title>
+  <meta name="robots" content="noindex,follow">
+  <link rel="canonical" href="https://sweforms.se/studio/">
+  <meta http-equiv="refresh" content="0;url=../studio/">
 </head>
 <body>
-<header><div class="wrap head">
-  <a class="brand" href="../" aria-label="SweForms startsida"><img src="../images/sweforms-logo.svg" alt="SweForms"></a>
-  <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">Meny</button>
-  <nav class="nav" id="siteNav" aria-label="Huvudmeny">
-    <a href="../bygg/">Bygg</a>
-    <a href="../form/" class="active">Form</a>
-    <a href="../om.html">Om</a>
-    <a href="../offert.html" class="cta">Kontakt</a>
-  </nav>
-</div></header>
-<main>
-  <section class="hero"><div class="wrap">
-    <span class="eyebrow">SweForms / Form</span>
-    <h1>3D-print, design & digitala produkter</h1>
-    <p class="lead">Den kreativa sidan av SweForms. 3D-print, digitala produkter, objekt och idéer som kan bli fysiska eller digitala former.</p>
-  </div></section>
-  <section><div class="wrap cards">
-    <a class="card" href="../kreativt/"><span class="arrow">↗</span><small>01</small><h2>SF Kreativt</h2><p>3D, digitalt, design och objekt.</p></a>
-    <a class="card" href="../home/"><span class="arrow">↗</span><small>02</small><h2>Home Maintenance</h2><p>Plan your home maintenance with the SweForms web app. Keep tasks, dates, costs and history in one place.</p></a>
-  </div></section>
-</main>
-<footer><div class="wrap">© <span id="year"></span> SweForms · <a href="mailto:kent@sweforms.se">kent@sweforms.se</a></div></footer>
-<script>
-const navToggle=document.getElementById('navToggle');
-const siteNav=document.getElementById('siteNav');
-if(navToggle&&siteNav){navToggle.addEventListener('click',()=>{const open=siteNav.classList.toggle('open');navToggle.setAttribute('aria-expanded',String(open));});}
-document.getElementById('year').textContent=new Date().getFullYear();
-</script>
-</body></html>
+  <a href="../studio/">Gå till SweForms Studio</a>
+</body>
+</html>
