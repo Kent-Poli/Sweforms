@@ -2,7 +2,11 @@
 
 The private Swedish order board runs on a Cloudflare Worker with D1 and Cloudflare Access. A signed Stripe Checkout event adds each paid session once. The owner moves the order through Nya, Packade and Skickade and can undo a status move. The board refreshes each minute. The Stripe payment link opens the payment and its associated details in the authenticated Stripe Dashboard. Customer names, addresses and card details are not stored in D1.
 
-## Set up a test environment
+## Publish the private board before enabling payments
+
+Use a dedicated Worker and D1 database. A `workers.dev` address can serve as the initial private address. Create the database, fill in the binding in `wrangler.toml`, and apply the migration. Deploy with no Stripe signing secret. The board stays locked until both the Access application audience and the exact owner email are configured. Enable Cloudflare Access for the entire Worker, allow only the owner, and verify the result with an authenticated owner session and a signed-out browser session. Leave the webhook behind Access until Stripe is configured.
+
+## Set up a Stripe test environment
 
 1. Create a D1 database for test orders. Copy `wrangler.example.toml` to `wrangler.toml` and enter the database ID. Run `npx wrangler d1 migrations apply DB --remote` from this directory.
 2. Attach a test hostname to the Worker. Protect it with a Cloudflare Access self-hosted app and an Allow policy for the owner's exact email. Set `ACCESS_AUD` to the app's audience tag and `OWNER_EMAIL` to that same email. This Worker uses `ctx.access` directly, without static assets or a service binding.

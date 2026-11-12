@@ -190,8 +190,10 @@ async function orderPage(url, env) {
 </style></head>
 <body><main>
   <header><div><strong>SweForms</strong><h1>Beställningar</h1></div><a href="/">Uppdatera</a></header>
-  <p>Betalda beställningar från Stripe. Sidan uppdateras varje minut.</p>
-  ${env.STRIPE_MODE === "test" ? '<p class="notice">Testläge</p>' : ""}
+  <p>Sidan uppdateras varje minut.</p>
+  ${!env.STRIPE_WEBHOOK_SECRET
+    ? '<p class="notice">Stripe är inte anslutet ännu. Nya beställningar visas här när betalningar har aktiverats.</p>'
+    : env.STRIPE_MODE === "test" ? '<p class="notice">Stripe är i testläge.</p>' : ""}
   ${url.searchParams.get("status") === "changed" ? '<p class="notice" role="status">Orderns status har redan ändrats. Kontrollera listan och försök igen.</p>' : ""}
   <div class="board">${board}</div>
 </main></body></html>`, 200, { "Content-Type": "text/html; charset=utf-8" });
