@@ -16,3 +16,9 @@ if (checkout && studioShop.ready && paymentUrl) {
   checkout.hidden = false;
   document.getElementById('availability').textContent = 'Fortsätt till betalning hos Stripe.';
 }
+
+const productPhoto = document.querySelector('.shop-product-photo');
+productPhoto?.addEventListener('click', () => {
+  const isLit = productPhoto.getAttribute('aria-pressed') === 'true';
+  productPhoto.setAttribute('aria-pressed', String(!isLit));
+});
