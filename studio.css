@@ -264,3 +264,25 @@
     padding-bottom: 32px;
   }
 }
+
+.shop-categories { padding-block: 20px 76px; }
+.shop-categories h1 { margin-bottom: 12px; }
+.shop-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 20px;
+  margin-top: 28px;
+}
+.shop-category {
+  position: relative;
+  display: block;
+  padding: 28px 50px 28px 24px;
+  border: 1px solid #e3e6e1;
+  background: #f4f3ef;
+  text-decoration: none;
+}
+.shop-category:hover { border-color: #087e8b; background: #edf1ec; }
+.shop-category h2 { font-size: 30px; margin-bottom: 9px; }
+.shop-category p { margin-bottom: 0; font-size: 14px; }
+.shop-category span { position: absolute; top: 26px; right: 23px; color: #087e8b; }
+.shop-breadcrumb { flex-wrap: wrap; }
