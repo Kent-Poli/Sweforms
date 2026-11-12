@@ -123,7 +123,6 @@
 }
 
 .shop-product-lit { opacity: 0; }
-.shop-product-photo[aria-pressed="true"] .shop-product-lit { opacity: 1; }
 
 @media (hover: hover) and (pointer: fine) {
   .shop-product-photo:hover .shop-product-lit { opacity: 1; }
@@ -151,15 +150,11 @@
   font-weight: 600;
 }
 
-.shop-product-copy details { font-size: 13px; }
-.shop-product-copy summary {
-  width: fit-content;
-  cursor: pointer;
-  text-underline-offset: 3px;
+.shop-product-copy h3 a { text-decoration: none; }
+.shop-product-copy h3 a:hover {
   text-decoration: underline;
+  text-underline-offset: 4px;
 }
-.shop-product-copy summary:focus-visible { outline: 2px solid #087e8b; }
-.shop-product-copy details p:first-of-type { margin-top: 8px; }
 
 @media (max-width: 1000px) {
   .shop-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -179,4 +174,93 @@
   .shop-banner p { margin-bottom: 14px; font-size: 14px; }
   .shop-catalog { padding-block: 26px 48px; }
   .shop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.product-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(30px, 6vw, 88px);
+  align-items: start;
+  padding-block: 12px 60px;
+}
+
+.product-gallery-main { margin: 0; }
+.product-gallery-main img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: #e9e9e5;
+}
+.product-gallery img[src$="midvinternatt-relief.jpg"] { object-position: center 84%; }
+.product-gallery-main figcaption {
+  margin-top: 8px;
+  color: #59625c;
+  font-size: 13px;
+}
+
+.product-gallery-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+.product-gallery-thumbnails a {
+  width: clamp(62px, 12vw, 88px);
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+}
+.product-gallery-thumbnails img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 2px solid transparent;
+}
+.product-gallery-thumbnails a[aria-current="true"] img,
+.product-gallery-thumbnails a:hover img { border-color: #087e8b; }
+
+.product-information .eyebrow { margin-bottom: 10px; }
+.product-information h1 {
+  margin-bottom: 8px;
+  font-size: clamp(38px, 5.2vw, 68px);
+  overflow-wrap: anywhere;
+}
+.product-subtitle { margin-bottom: 16px; }
+.product-availability {
+  display: inline-block;
+  margin: 0 0 20px;
+  padding: 6px 12px;
+  color: #334b4d;
+  background: #edf1ec;
+  font-size: 14px;
+  font-weight: 600;
+}
+.product-information section {
+  padding-block: 18px;
+  border-top: 1px solid #e3e6e1;
+}
+.product-information section h2 {
+  margin-bottom: 9px;
+  font-size: 27px;
+}
+.product-information section p { margin-bottom: 0; }
+.product-specifications { margin: 0 0 16px; }
+.product-specifications div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid #e3e6e1;
+  font-size: 14px;
+}
+.product-specifications dd { margin: 0; color: #59625c; }
+
+@media (max-width: 720px) {
+  .product-page {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-bottom: 32px;
+  }
 }
