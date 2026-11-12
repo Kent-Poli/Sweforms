@@ -349,3 +349,10 @@
     padding-block: 32px;
   }
 }
+
+.shop-category-banner {
+  width: calc(100% + 26px);
+  max-width: none;
+  height: auto;
+  margin-top: 16px;
+}
