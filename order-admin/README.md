@@ -8,6 +8,15 @@ Use a dedicated Worker and D1 database. A `workers.dev` address can serve as the
 
 ## Set up a Stripe test environment
 
+The owner can use **Testköp** on the private board before connecting Stripe. The
+test checkout creates a labeled SEK 0 order and uses the same status workflow.
+To enable owner notifications for these orders, set the Worker secret
+`RESEND_API_KEY` to a sending-only Resend key. The default test sender is
+`onboarding@resend.dev` and the only recipient is `OWNER_EMAIL`, which must
+match the email registered in Resend for the test sender. Use a fresh test order
+after configuring the key. The page reports whether Resend accepted the
+message. Verify actual delivery in the inbox.
+
 1. Create a D1 database for test orders. Copy `wrangler.example.toml` to `wrangler.toml` and enter the database ID. Run `npx wrangler d1 migrations apply DB --remote` from this directory.
 2. Attach a test hostname to the Worker. Protect it with a Cloudflare Access self-hosted app and an Allow policy for the owner's exact email. Set `ACCESS_AUD` to the app's audience tag and `OWNER_EMAIL` to that same email. This Worker uses `ctx.access` directly, without static assets or a service binding.
 3. Configure a more specific Access application for exactly `/stripe-webhook` with a Bypass policy so Stripe can deliver events. Keep the rest of the hostname behind Access. The Worker requires a valid Stripe signature for the webhook and owner authentication for the board and all status changes.

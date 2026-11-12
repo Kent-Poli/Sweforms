@@ -122,7 +122,71 @@ async function updateOrder(request, url, env) {
   return reply(null, 303, { Location: result.meta.changes ? "/" : "/?status=changed" });
 }
 
+async function createTestOrder(request, url, env) {
+  if (request.headers.get("Origin") !== url.origin) return reply("Otillåten begäran", 403);
+  if (request.headers.get("Content-Type")?.split(";")[0] !== "application/x-www-form-urlencoded") {
+    return reply("Ogiltigt formulär", 415);
+  }
+  const token = (await request.formData()).get("token");
+  if (typeof token !== "string" || !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(token)) {
+    return reply("Ogiltig testbeställning", 400);
+  }
+  const result = await env.DB.prepare(`
+    INSERT INTO orders (session_id, payment_id, paid_at)
+    VALUES (?, '', ?) ON CONFLICT(session_id) DO NOTHING
+  `).bind(`trial_${token}`, Math.floor(Date.now() / 1000)).run();
+  if (!result.meta.changes) return reply(null, 303, { Location: "/?test=duplicate" });
+  if (!env.RESEND_API_KEY) return reply(null, 303, { Location: "/?test=no-email" });
+
+  let accepted = false;
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+        "Idempotency-Key": `sweforms-trial-${token}`,
+      },
+      body: JSON.stringify({
+        from: "SweForms <onboarding@resend.dev>",
+        to: [env.OWNER_EMAIL],
+        subject: `SweForms: Testbeställning #${result.meta.last_row_id}`,
+        text: `En testbeställning har lagts för en lampskärm med vintermotiv. Ingen betalning gjordes.\n\nÖppna ordersidan: ${url.origin}/`,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    accepted = response.ok;
+  } catch {
+    // The test order is already saved. Report email status separately.
+  }
+  return reply(null, 303, { Location: accepted ? "/?test=email-accepted" : "/?test=email-error" });
+}
+
+function testCheckout() {
+  return reply(`<!doctype html>
+<html lang="sv"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Testköp | SweForms</title>
+<style>
+  body { margin: 40px auto; padding: 0 20px; max-width: 550px; background: #faf9f6;
+    color: #202e2e; font: 16px/1.5 system-ui, sans-serif; }
+  a { color: #075c64; } h1 { font: 42px Georgia, serif; }
+  button { padding: 12px 20px; border: 0; border-radius: 5px; background: #06636b;
+    color: white; font: inherit; cursor: pointer; }
+</style></head><body><main>
+  <a href="/">← Till beställningar</a>
+  <h1>Lampskärm med vintermotiv</h1>
+  <p>Provbeställning · 1 st · 0 kr</p>
+  <p>Beställningen sparas som en testorder. Ingen betalning eller leverans görs.</p>
+  <form action="/testkop" method="post">
+    <input type="hidden" name="token" value="${crypto.randomUUID()}">
+    <button type="submit">Gör testköp</button>
+  </form>
+</main></body></html>`, 200, { "Content-Type": "text/html; charset=utf-8" });
+}
+
 function orderCard(order, column) {
+  const isTrial = order.session_id.startsWith("trial_");
   const stripeMode = order.session_id.startsWith("cs_test_") ? "/test" : "";
   const paymentLink = paymentIdPattern.test(order.payment_id)
     ? `<a href="https://dashboard.stripe.com${stripeMode}/payments/${order.payment_id}" target="_blank" rel="noopener noreferrer">Öppna ordern i Stripe ↗</a>`
@@ -131,8 +195,9 @@ function orderCard(order, column) {
     `<button type="submit" name="to" value="${status}"${status === column.back?.[0] ? ' class="secondary"' : ""}>${label}</button>`
   ).join("");
   return `<li>
-    <h3>Order #${order.id}</h3>
-    <p>Betald ${dateFormat.format(order.paid_at * 1000)}</p>
+    <h3>${isTrial ? "Testorder" : "Order"} #${order.id}</h3>
+    ${isTrial ? "<p>Lampskärm med vintermotiv · 1 st · 0 kr</p>" : ""}
+    <p>${isTrial ? "Skapad" : "Betald"} ${dateFormat.format(order.paid_at * 1000)}</p>
     ${paymentLink}
     <form action="/status" method="post">
       <input type="hidden" name="id" value="${order.id}">
@@ -143,6 +208,14 @@ function orderCard(order, column) {
 }
 
 async function orderPage(url, env) {
+  const testMessages = {
+    "no-email": "Testordern sparades. Mejlavisering är inte ansluten ännu.",
+    "email-accepted": "Testordern sparades och mejlet lämnades till e-posttjänsten.",
+    "email-error": "Testordern sparades. E-posttjänsten bekräftade inte utskicket.",
+    duplicate: "Testordern är redan registrerad.",
+  };
+  const testResult = url.searchParams.get("test");
+  const testMessage = Object.hasOwn(testMessages, testResult) ? testMessages[testResult] : "";
   const { results } = await env.DB.prepare(`
     SELECT id, session_id, payment_id, paid_at, status FROM orders
     WHERE status IN ('new', 'packed') OR id IN (
@@ -189,8 +262,9 @@ async function orderPage(url, env) {
   @media (max-width: 760px) { .board { grid-template-columns: 1fr; } }
 </style></head>
 <body><main>
-  <header><div><strong>SweForms</strong><h1>Beställningar</h1></div><a href="/">Uppdatera</a></header>
+  <header><div><strong>SweForms</strong><h1>Beställningar</h1></div><div><a href="/testkop">Testköp</a> · <a href="/">Uppdatera</a></div></header>
   <p>Sidan uppdateras varje minut.</p>
+  ${testMessage ? `<p class="notice" role="status">${testMessage}</p>` : ""}
   ${!env.STRIPE_WEBHOOK_SECRET
     ? '<p class="notice">Stripe är inte anslutet ännu. Nya beställningar visas här när betalningar har aktiverats.</p>'
     : env.STRIPE_MODE === "test" ? '<p class="notice">Stripe är i testläge.</p>' : ""}
@@ -206,6 +280,8 @@ export default {
       if (url.pathname === "/stripe-webhook") return await stripeWebhook(request, env);
       if (!await ownerAuthenticated(env, context)) return reply("Inloggning krävs", 403);
       if (url.pathname === "/" && request.method === "GET") return await orderPage(url, env);
+      if (url.pathname === "/testkop" && request.method === "GET") return testCheckout();
+      if (url.pathname === "/testkop" && request.method === "POST") return await createTestOrder(request, url, env);
       if (url.pathname === "/status" && request.method === "POST") return await updateOrder(request, url, env);
       return reply("Sidan hittades inte", 404);
     } catch {
