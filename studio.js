@@ -14,5 +14,5 @@ const paymentUrl = approvedPaymentLink(studioShop.paymentLink);
 if (checkout && studioShop.ready && paymentUrl) {
   checkout.href = paymentUrl;
   checkout.hidden = false;
-  document.getElementById('availability').textContent = 'Continue to secure payment with Stripe.';
+  document.getElementById('availability').textContent = 'Fortsätt till betalning hos Stripe.';
 }
