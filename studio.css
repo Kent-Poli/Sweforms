@@ -286,3 +286,66 @@
 .shop-category p { margin-bottom: 0; font-size: 14px; }
 .shop-category span { position: absolute; top: 26px; right: 23px; color: #087e8b; }
 .shop-breadcrumb { flex-wrap: wrap; }
+
+.studio-footer {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: #173638;
+  color: #f8fbf9;
+  font-size: 14px;
+}
+.studio-footer .studio-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px;
+  padding-block: 44px;
+}
+.studio-footer h2 {
+  margin: 0 0 12px;
+  color: #fff;
+  font: 600 16px/1.4 Arial, Helvetica, sans-serif;
+}
+.studio-footer a {
+  display: block;
+  width: fit-content;
+  padding: 3px 0;
+  color: #e4efeb;
+  overflow-wrap: anywhere;
+}
+.studio-footer a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.studio-footer a:focus-visible { outline-color: #fff; }
+.studio-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px 24px;
+  padding-block: 18px;
+  border-top: 1px solid #527173;
+  font-size: 13px;
+}
+
+.studio-info {
+  max-width: 720px;
+  padding-block: 22px 62px;
+}
+.studio-info h1 {
+  margin-bottom: 20px;
+  font-size: clamp(37px, 5vw, 64px);
+  overflow-wrap: anywhere;
+}
+.studio-info h2 { margin-bottom: 12px; font-size: 30px; }
+.studio-info p { max-width: 65ch; }
+.studio-info section { padding: 22px 0 8px; border-top: 1px solid #e3e6e1; }
+.studio-info summary { cursor: pointer; font-weight: 600; }
+.studio-info details { margin-bottom: 14px; }
+.studio-info details p { margin: 8px 0 0; }
+
+@media (max-width: 750px) {
+  .studio-footer .studio-footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 18px;
+    padding-block: 32px;
+  }
+}
