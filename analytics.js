@@ -5,11 +5,12 @@
  */
 (() => {
   'use strict';
-  const cloudflareSiteToken = '';
+  const cloudflareSiteToken = '3a1df16475bf4bb6bf7a0a8dfc5a1f2f';
   if (!/^[a-f0-9]{32}$/i.test(cloudflareSiteToken)) return;
 
   const beacon = document.createElement('script');
   beacon.type = 'module';
-  beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js?token=' + cloudflareSiteToken;
+  beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  beacon.setAttribute('data-cf-beacon', JSON.stringify({ token: cloudflareSiteToken }));
   document.head.appendChild(beacon);
 })();
