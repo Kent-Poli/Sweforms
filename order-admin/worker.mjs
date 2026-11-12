@@ -185,6 +185,20 @@ function testCheckout() {
 </main></body></html>`, 200, { "Content-Type": "text/html; charset=utf-8" });
 }
 
+async function manageTestArchive(request, url, env) {
+  if (request.headers.get("Origin") !== url.origin) return reply("Otillåten begäran", 403);
+  const action = url.pathname === "/arkivera-testordrar";
+  if (action) {
+    await env.DB.prepare(`
+      INSERT OR IGNORE INTO archived_test_orders (order_id)
+      SELECT id FROM orders WHERE substr(session_id, 1, 6) = 'trial_'
+    `).run();
+  } else {
+    await env.DB.prepare("DELETE FROM archived_test_orders").run();
+  }
+  return reply(null, 303, { Location: action ? "/?test=archived" : "/?test=restored" });
+}
+
 function orderCard(order, column) {
   const isTrial = order.session_id.startsWith("trial_");
   const stripeMode = order.session_id.startsWith("cs_test_") ? "/test" : "";
@@ -213,16 +227,23 @@ async function orderPage(url, env) {
     "email-accepted": "Testordern sparades och mejlet lämnades till e-posttjänsten.",
     "email-error": "Testordern sparades. E-posttjänsten bekräftade inte utskicket.",
     duplicate: "Testordern är redan registrerad.",
+    archived: "Testordrarna har arkiverats.",
+    restored: "Testordrarna visas igen.",
   };
   const testResult = url.searchParams.get("test");
   const testMessage = Object.hasOwn(testMessages, testResult) ? testMessages[testResult] : "";
   const { results } = await env.DB.prepare(`
     SELECT id, session_id, payment_id, paid_at, status FROM orders
-    WHERE status IN ('new', 'packed') OR id IN (
-      SELECT id FROM orders WHERE status = 'shipped' ORDER BY updated_at DESC, id DESC LIMIT 50
-    )
+    WHERE id NOT IN (SELECT order_id FROM archived_test_orders)
+      AND (status IN ('new', 'packed') OR id IN (
+        SELECT id FROM orders WHERE status = 'shipped'
+          AND id NOT IN (SELECT order_id FROM archived_test_orders)
+        ORDER BY updated_at DESC, id DESC LIMIT 50
+      ))
     ORDER BY paid_at DESC, id DESC
   `).all();
+  const archived = await env.DB.prepare("SELECT count(*) AS count FROM archived_test_orders").first();
+  const hasVisibleTestOrders = results.some(order => order.session_id.startsWith("trial_"));
   const board = columns.map(column => {
     const orders = results.filter(order => order.status === column.status);
     const content = orders.length
@@ -270,6 +291,8 @@ async function orderPage(url, env) {
     : env.STRIPE_MODE === "test" ? '<p class="notice">Stripe är i testläge.</p>' : ""}
   ${url.searchParams.get("status") === "changed" ? '<p class="notice" role="status">Orderns status har redan ändrats. Kontrollera listan och försök igen.</p>' : ""}
   <div class="board">${board}</div>
+  ${hasVisibleTestOrders ? '<form action="/arkivera-testordrar" method="post"><button class="secondary">Arkivera testordrar</button></form>' : ""}
+  ${archived.count ? `<form action="/aterstall-testordrar" method="post"><button class="secondary">Visa arkiverade testordrar (${archived.count})</button></form>` : ""}
 </main></body></html>`, 200, { "Content-Type": "text/html; charset=utf-8" });
 }
 
@@ -282,6 +305,10 @@ export default {
       if (url.pathname === "/" && request.method === "GET") return await orderPage(url, env);
       if (url.pathname === "/testkop" && request.method === "GET") return testCheckout();
       if (url.pathname === "/testkop" && request.method === "POST") return await createTestOrder(request, url, env);
+      if (request.method === "POST" &&
+          ["/arkivera-testordrar", "/aterstall-testordrar"].includes(url.pathname)) {
+        return await manageTestArchive(request, url, env);
+      }
       if (url.pathname === "/status" && request.method === "POST") return await updateOrder(request, url, env);
       return reply("Sidan hittades inte", 404);
     } catch {

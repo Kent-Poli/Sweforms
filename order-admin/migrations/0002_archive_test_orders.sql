@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS archived_test_orders (
+  order_id INTEGER PRIMARY KEY REFERENCES orders(id) ON DELETE CASCADE
+);
