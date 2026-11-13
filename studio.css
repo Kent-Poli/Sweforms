@@ -192,7 +192,7 @@
   object-fit: cover;
   background: #e9e9e5;
 }
-.product-gallery img[src$="midvinternatt-relief.jpg"] { object-position: center 84%; }
+.product-gallery img[src$="midvinternatt-detalj-mjuk.jpg"] { object-position: center 84%; }
 .product-gallery-main figcaption {
   margin-top: 8px;
   color: #59625c;
