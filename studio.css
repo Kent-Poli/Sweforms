@@ -356,3 +356,5 @@
   height: auto;
   margin-top: 16px;
 }
+
+.stock-checkout:disabled { background: #e6ebe3; border-color: #e6ebe3; color: #334b4d; cursor: default; }
