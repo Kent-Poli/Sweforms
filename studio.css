@@ -358,12 +358,29 @@
 }
 
 .stock-checkout {
-  background: #237044;
-  border-color: #237044;
+  background: #008439;
+  border-color: #008439;
   min-height: 54px;
   padding: 14px 28px;
   font: 700 17px Roboto, system-ui, sans-serif;
+  transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
-.stock-checkout:hover:not(:disabled) { background: #185431; border-color: #185431; }
-.stock-checkout:disabled { background: #dcecdf; border-color: #b6d5bf; color: #225739; cursor: default; }
+.stock-checkout:disabled {
+  background: #72e58d;
+  border-color: #35a653;
+  color: #123b21;
+  cursor: default;
+}
+@media (hover: hover) and (pointer: fine) {
+  .stock-checkout:hover {
+    background: #006d2e;
+    box-shadow: 0 6px 14px rgb(0 100 46 / 25%);
+    transform: translateY(-2px);
+  }
+  .stock-checkout:disabled:hover { background: #8befa0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stock-checkout { transition: none; }
+  .stock-checkout:hover { transform: none; }
+}
 .stock-checkout + [data-stock] { margin-top: 10px; }
