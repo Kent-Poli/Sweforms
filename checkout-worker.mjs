@@ -20,6 +20,31 @@ async function stripe(path, env, options = {}) {
   if (!res.ok) throw new Error("Stripe API unavailable");
   return res.json();
 }
+async function reserveStock(db, id, items) {
+  const quantities = JSON.stringify(Object.fromEntries(items.map(i => [i.id, i.quantity])));
+  // One atomic SQLite statement checks and inserts all products together.
+  const result = await db.prepare(`INSERT INTO reservations(id,items,status)
+    SELECT ?, ?, 'held' WHERE NOT EXISTS (
+      SELECT 1 FROM json_each(?) wanted LEFT JOIN inventory i ON i.sku=wanted.key
+      WHERE i.sku IS NULL OR i.quantity - COALESCE((
+        SELECT SUM(CAST(json_extract(r.items, '$.' || wanted.key) AS INTEGER))
+        FROM reservations r WHERE r.status='held'),0) < CAST(wanted.value AS INTEGER)
+    )`).bind(id, quantities, quantities).run();
+  return result.meta.changes === 1;
+}
+async function settleStock(db, reservationId, paid) {
+  if (paid) {
+    // D1 batch is atomic: only a held reservation can decrement inventory, once.
+    await db.batch([
+      db.prepare(`UPDATE inventory SET quantity=quantity-CAST(json_extract(
+        (SELECT items FROM reservations WHERE id=?), '$.'||sku) AS INTEGER)
+        WHERE json_extract((SELECT items FROM reservations WHERE id=? AND status='held'), '$.'||sku) IS NOT NULL`).bind(reservationId,reservationId),
+      db.prepare("UPDATE reservations SET status='paid' WHERE id=? AND status='held'").bind(reservationId)
+    ]);
+  } else {
+    await db.prepare("UPDATE reservations SET status='released' WHERE id=? AND status='held'").bind(reservationId).run();
+  }
+}
 async function checkout(req, env) {
   const origin = req.headers.get("Origin");
   if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !env.STRIPE_SECRET_KEY?.startsWith("sk_test_")) return reply({error:"Kassan är inte konfigurerad."}, 403);
@@ -31,24 +56,19 @@ async function checkout(req, env) {
     if (!item || !Object.hasOwn(PRODUCTS,item.id) || seen.has(item.id) || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99) return reply({error:"Ogiltig varukorg."},400,origin);
     seen.add(item.id);
   }
-  // Stock is checked again at checkout; this is not an inventory reservation.
-  let inventory;
-  if (env.TEST_STOCK) {
-    inventory = JSON.parse(env.TEST_STOCK); // Isolated sandbox data, never live stock.
-  } else {
-    const inventoryResponse = await fetch("https://sweforms-stripe-test.kent-poli.workers.dev/lagersaldo.json", {cache:"no-store"});
-    if (!inventoryResponse.ok) return reply({error:"Lagersaldot är tillfälligt otillgängligt."},503,origin);
-    inventory = await inventoryResponse.json();
-  }
-  if (input.items.some(item => !Number.isInteger(inventory[item.id]) || inventory[item.id] < item.quantity)) return reply({error:"Lagersaldot har ändrats. Kontrollera varukorgen."},409,origin);
+  if (!env.STOCK_DB) return reply({error:"Lagersaldot är tillfälligt otillgängligt."},503,origin);
   const priceObjects = await Promise.all(input.items.map(i => stripe("prices/" + PRODUCTS[i.id],env)));
   if (priceObjects.some(p => !p.active || p.currency !== "sek" || p.unit_amount !== PRICE || p.livemode)) return reply({error:"Priset kunde inte verifieras."},503,origin);
   const subtotal = input.items.reduce((sum,item) => sum + item.quantity * PRICE, 0);
   const selectedShipping = subtotal >= THRESHOLD ? SHIPPING.free : SHIPPING.paid;
   const rate = await stripe("shipping_rates/" + selectedShipping,env);
   if (!rate.active || rate.livemode || rate.fixed_amount?.currency !== "sek" || rate.fixed_amount?.amount !== (subtotal >= THRESHOLD ? 0 : 7900)) return reply({error:"Fraktpriset kunde inte verifieras."},503,origin);
+  const reservationId = crypto.randomUUID();
+  if (!await reserveStock(env.STOCK_DB,reservationId,input.items)) return reply({error:"Lagersaldot har ändrats. Kontrollera varukorgen."},409,origin);
   const form = new URLSearchParams();
   form.set("mode","payment");
+  form.set("metadata[reservation_id]",reservationId);
+  form.set("expires_at",String(Math.floor(Date.now()/1000)+1860));
   form.set("adaptive_pricing[enabled]","false");
   form.set("success_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=complete&session_id={CHECKOUT_SESSION_ID}");
   form.set("cancel_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=cancelled");
@@ -71,7 +91,8 @@ async function checkout(req, env) {
     form.set("line_items["+index+"][quantity]",String(item.quantity));
     form.set("line_items["+index+"][tax_rates][0]",PRODUCT_TAX_RATE);
   });
-  const session = await stripe("checkout/sessions",env,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:form.toString()});
+  // An uncertain Stripe error leaves the reservation held for manual reconciliation.
+  const session = await stripe("checkout/sessions",env,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","Idempotency-Key":reservationId},body:form.toString()});
   if (session.livemode || !session.url || new URL(session.url).hostname !== "checkout.stripe.com") throw new Error("Invalid Stripe session");
   return reply({url:session.url, sessionId:session.id},200,origin);
 }
@@ -101,6 +122,15 @@ async function verifiedWebhook(request, env) {
   if (!ok) return reply({error:"Invalid signature"},400);
   const event=JSON.parse(body);
   if (event.livemode) return reply({error:"Live events disabled"},400);
+  const reservationId = event.data?.object?.metadata?.reservation_id;
+  if (reservationId && /^[0-9a-f-]{36}$/.test(reservationId)) {
+    if (!env.STOCK_DB) return reply({error:"Stock unavailable"},503);
+    if (["checkout.session.completed","checkout.session.async_payment_succeeded"].includes(event.type) && event.data.object.payment_status === "paid") {
+      await settleStock(env.STOCK_DB,reservationId,true);
+    } else if (["checkout.session.expired","checkout.session.async_payment_failed"].includes(event.type)) {
+      await settleStock(env.STOCK_DB,reservationId,false);
+    }
+  }
   if (["checkout.session.completed","checkout.session.async_payment_succeeded"].includes(event.type) && event.data?.object?.payment_status === "paid") {
     // Stripe is the order record. No fulfillment or customer details are written to logs.
     console.log("Verified paid checkout",event.id,event.data.object.id);
@@ -118,3 +148,4 @@ export default { async fetch(request,env) {
     return reply({error:"Not found"},404);
   } catch { return reply({error:"Något gick fel. Försök igen."},500,origin===env.PREVIEW_ORIGIN?origin:null); }
 }};
+
