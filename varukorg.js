@@ -109,7 +109,7 @@
     const id = button.dataset.cartAdd;
     if (!products[id]) continue;
     button.onclick = () => { cart[id] = Math.min((cart[id] || 0) + 1, 99); save(); dialog.showModal(); };
-    fetch("https://sweforms-stripe-test.kent-poli.workers.dev/lagersaldo.json", {cache:"no-store"})
+    fetch((location.hostname === "127.0.0.1" ? "https://sweforms-kassa-sandbox.kent-poli.workers.dev/lagersaldo.json" : "/lagersaldo-not-configured"), {cache:"no-store"})
       .then(r => { if (!r.ok) throw Error(); return r.json(); })
       .then(stock => { if (Number.isInteger(stock[id]) && stock[id] > 0) { button.disabled = false; button.textContent = "Lägg i varukorgen"; } else if (stock[id] === 0) { button.textContent = "Slut i lager"; } else { button.textContent = "Lagersaldo otillgängligt"; } })
       .catch(() => { button.textContent = "Lagersaldo otillgängligt"; });
