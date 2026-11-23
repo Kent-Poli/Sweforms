@@ -6,6 +6,7 @@ const PRODUCTS = Object.freeze({
 });
 const SHIPPING = { paid: "shr_1UetsEF5PTt3WP4lHyexLo2S", free: "shr_1UetsmF5PTt3WP4lU6KoL3iM" };
 const PRICE = 44900, THRESHOLD = 100000;
+const PRODUCT_TAX_RATE = "txr_1UeuhIF5PTt3WP4lNnzfAgql";
 function reply(body, status, origin) {
   return new Response(JSON.stringify(body), {status, headers: {
     "Content-Type": "application/json", "Cache-Control": "no-store",
@@ -30,6 +31,11 @@ async function checkout(req, env) {
     if (!item || !Object.hasOwn(PRODUCTS,item.id) || seen.has(item.id) || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99) return reply({error:"Ogiltig varukorg."},400,origin);
     seen.add(item.id);
   }
+  // Stock is checked again at checkout; this is not an inventory reservation.
+  const inventoryResponse = await fetch("https://sweforms-stripe-test.kent-poli.workers.dev/lagersaldo.json", {cache:"no-store"});
+  if (!inventoryResponse.ok) return reply({error:"Lagersaldot är tillfälligt otillgängligt."},503,origin);
+  const inventory = await inventoryResponse.json();
+  if (input.items.some(item => !Number.isInteger(inventory[item.id]) || inventory[item.id] < item.quantity)) return reply({error:"Lagersaldot har ändrats. Kontrollera varukorgen."},409,origin);
   const priceObjects = await Promise.all(input.items.map(i => stripe("prices/" + PRODUCTS[i.id],env)));
   if (priceObjects.some(p => !p.active || p.currency !== "sek" || p.unit_amount !== PRICE || p.livemode)) return reply({error:"Priset kunde inte verifieras."},503,origin);
   const subtotal = input.items.reduce((sum,item) => sum + item.quantity * PRICE, 0);
@@ -46,6 +52,7 @@ async function checkout(req, env) {
   input.items.forEach((item,index) => {
     form.set("line_items["+index+"][price]",PRODUCTS[item.id]);
     form.set("line_items["+index+"][quantity]",String(item.quantity));
+    form.set("line_items["+index+"][tax_rates][0]",PRODUCT_TAX_RATE);
   });
   const session = await stripe("checkout/sessions",env,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:form.toString()});
   if (session.livemode || !session.url || new URL(session.url).hostname !== "checkout.stripe.com") throw new Error("Invalid Stripe session");
