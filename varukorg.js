@@ -76,7 +76,7 @@
     (async () => {
       try {
         if (!checkoutEndpoint || !/^cs_test_[a-zA-Z0-9]+$/.test(sessionId || "")) throw new Error();
-        const response = await fetch(checkoutEndpoint.replace(/\\/checkout$/, "/checkout-status") + "?session_id=" + encodeURIComponent(sessionId));
+        const response = await fetch(checkoutEndpoint.slice(0, -"checkout".length) + "checkout-status" + "?session_id=" + encodeURIComponent(sessionId));
         if (!response.ok) throw new Error();
         const result = await response.json();
         if (!result.paid) {
