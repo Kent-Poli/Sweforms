@@ -45,6 +45,19 @@ async function settleStock(db, reservationId, paid) {
     await db.prepare("UPDATE reservations SET status='released' WHERE id=? AND status='held'").bind(reservationId).run();
   }
 }
+async function availableStock(request, env) {
+  const origin = request.headers.get("Origin");
+  if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !env.STRIPE_SECRET_KEY?.startsWith("sk_test_") || !env.STOCK_DB) return reply({error:"Not configured"},403);
+  const result = await env.STOCK_DB.prepare(`SELECT i.sku, i.quantity - COALESCE((
+    SELECT SUM(CAST(json_extract(r.items, '$.' || i.sku) AS INTEGER))
+    FROM reservations r WHERE r.status='held'),0) AS available FROM inventory i`).all();
+  const stock = {};
+  for (const row of result.results) {
+    if (Object.hasOwn(PRODUCTS,row.sku) && Number.isInteger(row.available) && row.available >= 0) stock[row.sku] = row.available;
+  }
+  if (Object.keys(stock).length !== Object.keys(PRODUCTS).length) throw new Error("Invalid inventory");
+  return reply(stock,200,origin);
+}
 async function checkout(req, env) {
   const origin = req.headers.get("Origin");
   if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !env.STRIPE_SECRET_KEY?.startsWith("sk_test_")) return reply({error:"Kassan är inte konfigurerad."}, 403);
@@ -142,6 +155,7 @@ export default { async fetch(request,env) {
   if (request.method==="OPTIONS" && url.pathname==="/checkout" && origin===env.PREVIEW_ORIGIN)
     return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":origin,"Access-Control-Allow-Methods":"POST, OPTIONS","Access-Control-Allow-Headers":"Content-Type","Vary":"Origin"}});
   try {
+    if (request.method==="GET" && url.pathname==="/lagersaldo.json") return await availableStock(request,env);
     if (request.method==="POST" && url.pathname==="/checkout") return await checkout(request,env);
     if (request.method==="GET" && url.pathname==="/checkout-status") return await checkoutStatus(request,env);
     if (request.method==="POST" && url.pathname==="/webhook") return await verifiedWebhook(request,env);
