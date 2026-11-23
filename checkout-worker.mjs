@@ -38,7 +38,7 @@ async function checkout(req, env) {
   if (!rate.active || rate.livemode || rate.fixed_amount?.currency !== "sek" || rate.fixed_amount?.amount !== (subtotal >= THRESHOLD ? 0 : 7900)) return reply({error:"Fraktpriset kunde inte verifieras."},503,origin);
   const form = new URLSearchParams();
   form.set("mode","payment");
-  form.set("success_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=complete");
+  form.set("success_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=complete&session_id={CHECKOUT_SESSION_ID}");
   form.set("cancel_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=cancelled");
   form.set("shipping_address_collection[allowed_countries][0]","SE");
   form.set("phone_number_collection[enabled]","true");
@@ -49,7 +49,16 @@ async function checkout(req, env) {
   });
   const session = await stripe("checkout/sessions",env,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:form.toString()});
   if (session.livemode || !session.url || new URL(session.url).hostname !== "checkout.stripe.com") throw new Error("Invalid Stripe session");
-  return reply({url:session.url},200,origin);
+  return reply({url:session.url, sessionId:session.id},200,origin);
+}
+async function checkoutStatus(request, env) {
+  const origin = request.headers.get("Origin");
+  if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !env.STRIPE_SECRET_KEY?.startsWith("sk_test_")) return reply({error:"Not configured"},403);
+  const sessionId = new URL(request.url).searchParams.get("session_id");
+  if (!/^cs_test_[a-zA-Z0-9]+$/.test(sessionId || "")) return reply({error:"Invalid session"},400,origin);
+  const session = await stripe("checkout/sessions/" + encodeURIComponent(sessionId),env);
+  if (session.livemode || session.id !== sessionId) return reply({error:"Invalid session"},400,origin);
+  return reply({paid:session.payment_status === "paid", status:session.status},200,origin);
 }
 async function verifiedWebhook(request, env) {
   if (!env.STRIPE_WEBHOOK_SECRET) return reply({error:"Webhook not configured"},503);
@@ -80,6 +89,7 @@ export default { async fetch(request,env) {
     return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":origin,"Access-Control-Allow-Methods":"POST, OPTIONS","Access-Control-Allow-Headers":"Content-Type","Vary":"Origin"}});
   try {
     if (request.method==="POST" && url.pathname==="/checkout") return await checkout(request,env);
+    if (request.method==="GET" && url.pathname==="/checkout-status") return await checkoutStatus(request,env);
     if (request.method==="POST" && url.pathname==="/webhook") return await verifiedWebhook(request,env);
     return reply({error:"Not found"},404);
   } catch { return reply({error:"Något gick fel. Försök igen."},500,origin===env.PREVIEW_ORIGIN?origin:null); }
