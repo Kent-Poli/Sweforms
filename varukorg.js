@@ -58,6 +58,8 @@
       const response = await fetch(checkoutEndpoint, {method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({items})});
       const data = await response.json();
       if (!response.ok || !data.url || new URL(data.url).origin !== "https://checkout.stripe.com") throw new Error(data.error || "Kunde inte öppna kassan.");
+      if (!/^cs_test_[a-zA-Z0-9]+$/.test(data.sessionId || "")) throw new Error("Ogiltig kassa");
+      sessionStorage.setItem("sweforms-pending-" + data.sessionId, JSON.stringify(cart));
       location.assign(data.url);
     } catch (error) {
       message.textContent = "Kassan kunde inte öppnas. Försök igen.";
@@ -68,7 +70,37 @@
     dialog.querySelector("[data-checkout-message]").textContent = "Köpet avbröts. Din varukorg finns kvar.";
   }
   if (new URLSearchParams(location.search).get("checkout") === "complete") {
-    dialog.querySelector("[data-checkout-message]").textContent = "Tack! Kontrollera din betalningsbekräftelse. Om betalningen behandlas kan bekräftelsen dröja.";
+    const message = dialog.querySelector("[data-checkout-message]");
+    const sessionId = new URLSearchParams(location.search).get("session_id");
+    message.textContent = "Kontrollerar betalningen …";
+    (async () => {
+      try {
+        if (!checkoutEndpoint || !/^cs_test_[a-zA-Z0-9]+$/.test(sessionId || "")) throw new Error();
+        const response = await fetch(checkoutEndpoint.replace(/\\/checkout$/, "/checkout-status") + "?session_id=" + encodeURIComponent(sessionId));
+        if (!response.ok) throw new Error();
+        const result = await response.json();
+        if (!result.paid) {
+          message.textContent = "Betalningen behandlas fortfarande. Kontrollera din betalningsbekräftelse.";
+          return;
+        }
+        const pendingKey = "sweforms-pending-" + sessionId;
+        const purchased = JSON.parse(sessionStorage.getItem(pendingKey) || "null");
+        if (purchased && typeof purchased === "object") {
+          for (const id of Object.keys(products)) {
+            const qty = purchased[id];
+            if (Number.isInteger(qty) && qty > 0 && cart[id]) {
+              cart[id] = Math.max(0, cart[id] - qty);
+              if (!cart[id]) delete cart[id];
+            }
+          }
+          sessionStorage.removeItem(pendingKey);
+          save();
+        }
+        message.textContent = "Tack för ditt köp! Betalningen är bekräftad.";
+      } catch {
+        message.textContent = "Vi kunde inte kontrollera betalningen just nu. Kontrollera din betalningsbekräftelse eller kontakta oss.";
+      }
+    })();
   }
   if (["complete", "cancelled"].includes(new URLSearchParams(location.search).get("checkout"))) dialog.showModal();
   trigger.onclick = () => dialog.showModal();
