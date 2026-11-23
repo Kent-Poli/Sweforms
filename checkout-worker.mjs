@@ -104,8 +104,15 @@ async function checkout(req, env) {
     form.set("line_items["+index+"][quantity]",String(item.quantity));
     form.set("line_items["+index+"][tax_rates][0]",PRODUCT_TAX_RATE);
   });
-  // An uncertain Stripe error leaves the reservation held for manual reconciliation.
-  const session = await stripe("checkout/sessions",env,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","Idempotency-Key":reservationId},body:form.toString()});
+  // Retry with the same idempotency key: an interrupted response must not create a second session.
+  // If both attempts fail, keep the reservation for reconciliation; payment may still be possible.
+  const options = {method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","Idempotency-Key":reservationId},body:form.toString()};
+  let session;
+  try {
+    session = await stripe("checkout/sessions",env,options);
+  } catch {
+    session = await stripe("checkout/sessions",env,options);
+  }
   if (session.livemode || !session.url || new URL(session.url).hostname !== "checkout.stripe.com") throw new Error("Invalid Stripe session");
   return reply({url:session.url, sessionId:session.id},200,origin);
 }
