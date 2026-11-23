@@ -62,7 +62,7 @@
       sessionStorage.setItem("sweforms-pending-" + data.sessionId, JSON.stringify(cart));
       location.assign(data.url);
     } catch (error) {
-      message.textContent = "Kassan kunde inte öppnas. Försök igen.";
+      message.textContent = error.message || "Kassan kunde inte öppnas. Försök igen.";
       button.disabled = false;
     }
   };
