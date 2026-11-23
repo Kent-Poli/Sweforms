@@ -70,6 +70,7 @@
   if (new URLSearchParams(location.search).get("checkout") === "complete") {
     dialog.querySelector("[data-checkout-message]").textContent = "Tack! Kontrollera din betalningsbekräftelse. Om betalningen behandlas kan bekräftelsen dröja.";
   }
+  if (["complete", "cancelled"].includes(new URLSearchParams(location.search).get("checkout"))) dialog.showModal();
   trigger.onclick = () => dialog.showModal();
   dialog.querySelector("[data-close]").onclick = () => dialog.close();
   for (const button of document.querySelectorAll("[data-cart-add]")) {
@@ -78,7 +79,7 @@
     button.onclick = () => { cart[id] = Math.min((cart[id] || 0) + 1, 99); save(); dialog.showModal(); };
     fetch("https://sweforms-stripe-test.kent-poli.workers.dev/lagersaldo.json", {cache:"no-store"})
       .then(r => { if (!r.ok) throw Error(); return r.json(); })
-      .then(stock => { if (Number.isInteger(stock[id]) && stock[id] > 0) { button.disabled = false; button.textContent = "Lägg i varukorgen"; } else { button.textContent = "Slut i lager"; } })
+      .then(stock => { if (Number.isInteger(stock[id]) && stock[id] > 0) { button.disabled = false; button.textContent = "Lägg i varukorgen"; } else if (stock[id] === 0) { button.textContent = "Slut i lager"; } else { button.textContent = "Lagersaldo otillgängligt"; } })
       .catch(() => { button.textContent = "Lagersaldo otillgängligt"; });
   }
   window.addEventListener("storage", event => { if (event.key === key) location.reload(); });
