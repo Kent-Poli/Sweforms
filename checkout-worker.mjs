@@ -55,7 +55,7 @@ async function verifiedWebhook(request, env) {
   if (!env.STRIPE_WEBHOOK_SECRET) return reply({error:"Webhook not configured"},503);
   const header=request.headers.get("stripe-signature") || "", parts=header.split(",").map(v=>v.split("="));
   const timestamp=parts.find(([k])=>k==="t")?.[1], signatures=parts.filter(([k])=>k==="v1").map(([,v])=>v);
-  if (!/^\\d+$/.test(timestamp || "") || Math.abs(Date.now()/1000-Number(timestamp))>300 || !signatures.length) return reply({error:"Invalid signature"},400);
+  if (!/^[0-9]+$/.test(timestamp || "") || Math.abs(Date.now()/1000-Number(timestamp))>300 || !signatures.length) return reply({error:"Invalid signature"},400);
   const body=await request.text();
   if (body.length>1000000) return reply({error:"Too large"},413);
   const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(env.STRIPE_WEBHOOK_SECRET),{name:"HMAC",hash:"SHA-256"},false,["verify"]);
