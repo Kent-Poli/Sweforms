@@ -1,0 +1,86 @@
+// Test-only Stripe Checkout worker. Configure secrets and an isolated preview origin before deployment.
+const PRODUCTS = Object.freeze({
+  sommarang: "price_1UetnxF5PTt3WP4l3I4QRLWm",
+  skogssjo: "price_1UetkfF5PTt3WP4lA9IyJuzZ",
+  midvinternatt: "price_1UetbeF5PTt3WP4lxg9UIh1L"
+});
+const SHIPPING = { paid: "shr_1UetsEF5PTt3WP4lHyexLo2S", free: "shr_1UetsmF5PTt3WP4lU6KoL3iM" };
+const PRICE = 44900, THRESHOLD = 100000;
+function reply(body, status, origin) {
+  return new Response(JSON.stringify(body), {status, headers: {
+    "Content-Type": "application/json", "Cache-Control": "no-store",
+    ...(origin ? {"Access-Control-Allow-Origin": origin, "Vary": "Origin"} : {})
+  }});
+}
+async function stripe(path, env, options = {}) {
+  const res = await fetch("https://api.stripe.com/v1/" + path, {
+    ...options, headers: {Authorization: "Bearer " + env.STRIPE_SECRET_KEY, ...options.headers}
+  });
+  if (!res.ok) throw new Error("Stripe API unavailable");
+  return res.json();
+}
+async function checkout(req, env) {
+  const origin = req.headers.get("Origin");
+  if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !env.STRIPE_SECRET_KEY?.startsWith("sk_test_")) return reply({error:"Kassan är inte konfigurerad."}, 403);
+  if (!(req.headers.get("content-type") || "").startsWith("application/json")) return reply({error:"Ogiltig förfrågan."}, 400, origin);
+  const input = await req.json();
+  if (!input || !Array.isArray(input.items) || input.items.length < 1 || input.items.length > 3) return reply({error:"Ogiltig varukorg."}, 400, origin);
+  const seen = new Set();
+  for (const item of input.items) {
+    if (!item || !Object.hasOwn(PRODUCTS,item.id) || seen.has(item.id) || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99) return reply({error:"Ogiltig varukorg."},400,origin);
+    seen.add(item.id);
+  }
+  const priceObjects = await Promise.all(input.items.map(i => stripe("prices/" + PRODUCTS[i.id],env)));
+  if (priceObjects.some(p => !p.active || p.currency !== "sek" || p.unit_amount !== PRICE || p.livemode)) return reply({error:"Priset kunde inte verifieras."},503,origin);
+  const subtotal = input.items.reduce((sum,item) => sum + item.quantity * PRICE, 0);
+  const selectedShipping = subtotal >= THRESHOLD ? SHIPPING.free : SHIPPING.paid;
+  const rate = await stripe("shipping_rates/" + selectedShipping,env);
+  if (!rate.active || rate.livemode || rate.fixed_amount?.currency !== "sek" || rate.fixed_amount?.amount !== (subtotal >= THRESHOLD ? 0 : 7900)) return reply({error:"Fraktpriset kunde inte verifieras."},503,origin);
+  const form = new URLSearchParams();
+  form.set("mode","payment");
+  form.set("success_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=complete");
+  form.set("cancel_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=cancelled");
+  form.set("shipping_address_collection[allowed_countries][0]","SE");
+  form.set("phone_number_collection[enabled]","true");
+  form.set("shipping_options[0][shipping_rate]",selectedShipping);
+  input.items.forEach((item,index) => {
+    form.set("line_items["+index+"][price]",PRODUCTS[item.id]);
+    form.set("line_items["+index+"][quantity]",String(item.quantity));
+  });
+  const session = await stripe("checkout/sessions",env,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:form.toString()});
+  if (session.livemode || !session.url || new URL(session.url).hostname !== "checkout.stripe.com") throw new Error("Invalid Stripe session");
+  return reply({url:session.url},200,origin);
+}
+async function verifiedWebhook(request, env) {
+  if (!env.STRIPE_WEBHOOK_SECRET) return reply({error:"Webhook not configured"},503);
+  const header=request.headers.get("stripe-signature") || "", parts=header.split(",").map(v=>v.split("="));
+  const timestamp=parts.find(([k])=>k==="t")?.[1], signatures=parts.filter(([k])=>k==="v1").map(([,v])=>v);
+  if (!/^\\d+$/.test(timestamp || "") || Math.abs(Date.now()/1000-Number(timestamp))>300 || !signatures.length) return reply({error:"Invalid signature"},400);
+  const body=await request.text();
+  if (body.length>1000000) return reply({error:"Too large"},413);
+  const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(env.STRIPE_WEBHOOK_SECRET),{name:"HMAC",hash:"SHA-256"},false,["verify"]);
+  let ok=false;
+  for (const signature of signatures) {
+    if (!/^[a-f0-9]{64}$/i.test(signature)) continue;
+    const bytes=Uint8Array.from(signature.match(/../g).map(h=>parseInt(h,16)));
+    if (await crypto.subtle.verify("HMAC",key,bytes,new TextEncoder().encode(timestamp+"."+body))) ok=true;
+  }
+  if (!ok) return reply({error:"Invalid signature"},400);
+  const event=JSON.parse(body);
+  if (event.livemode) return reply({error:"Live events disabled"},400);
+  if (["checkout.session.completed","checkout.session.async_payment_succeeded"].includes(event.type) && event.data?.object?.payment_status === "paid") {
+    // Stripe is the order record. No fulfillment or customer details are written to logs.
+    console.log("Verified paid checkout",event.id,event.data.object.id);
+  }
+  return reply({received:true},200);
+}
+export default { async fetch(request,env) {
+  const url=new URL(request.url), origin=request.headers.get("Origin");
+  if (request.method==="OPTIONS" && url.pathname==="/checkout" && origin===env.PREVIEW_ORIGIN)
+    return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":origin,"Access-Control-Allow-Methods":"POST, OPTIONS","Access-Control-Allow-Headers":"Content-Type","Vary":"Origin"}});
+  try {
+    if (request.method==="POST" && url.pathname==="/checkout") return await checkout(request,env);
+    if (request.method==="POST" && url.pathname==="/webhook") return await verifiedWebhook(request,env);
+    return reply({error:"Not found"},404);
+  } catch { return reply({error:"Något gick fel. Försök igen."},500,origin===env.PREVIEW_ORIGIN?origin:null); }
+}};
