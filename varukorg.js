@@ -6,7 +6,12 @@
   };
   const price = 449, shipping = 79, threshold = 1000, key = "sweforms-cart-v1";
   // Set this to the isolated test worker URL after the test environment is deployed.
-  const checkoutEndpoint = "";
+  const checkoutEndpoint = "https://sweforms-kassa-sandbox.kent-poli.workers.dev/checkout";
+  const banner = document.createElement("p");
+  banner.setAttribute("role", "status");
+  banner.style.cssText = "margin:0;padding:12px;text-align:center;background:#fff1c2;color:#382b00;font-weight:700";
+  banner.textContent = "TESTLÄGE – inga riktiga köp eller leveranser. Använd endast Stripes testkort.";
+  document.body.prepend(banner);
   let cart = {};
   try {
     const saved = JSON.parse(localStorage.getItem(key) || "{}");
@@ -109,7 +114,7 @@
     const id = button.dataset.cartAdd;
     if (!products[id]) continue;
     button.onclick = () => { cart[id] = Math.min((cart[id] || 0) + 1, 99); save(); dialog.showModal(); };
-    fetch((location.hostname === "127.0.0.1" ? "https://sweforms-kassa-sandbox.kent-poli.workers.dev/lagersaldo.json" : "/lagersaldo-not-configured"), {cache:"no-store"})
+    fetch("https://sweforms-kassa-sandbox.kent-poli.workers.dev/lagersaldo.json", {cache:"no-store"})
       .then(r => { if (!r.ok) throw Error(); return r.json(); })
       .then(stock => { if (Number.isInteger(stock[id]) && stock[id] > 0) { button.disabled = false; button.textContent = "Lägg i varukorgen"; } else if (stock[id] === 0) { button.textContent = "Slut i lager"; } else { button.textContent = "Lagersaldo otillgängligt"; } })
       .catch(() => { button.textContent = "Lagersaldo otillgängligt"; });
