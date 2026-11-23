@@ -23,7 +23,7 @@ function renderCheckout(button, quantity) {
 }
 
 async function readStock() {
-  const response = await fetch("https://sweforms-stripe-test.kent-poli.workers.dev/lagersaldo.json", { cache: "no-store" });
+  const response = await fetch("https://sweforms-kassa-sandbox.kent-poli.workers.dev/lagersaldo.json", { cache: "no-store" });
   if (!response.ok) throw new Error("Inventory unavailable");
   return response.json();
 }
