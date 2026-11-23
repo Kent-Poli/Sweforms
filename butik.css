@@ -115,3 +115,44 @@
   .shop-home-extra { grid-template-columns:1fr; }
   .shop-home-hero-photo { min-height:220px; }
 }
+
+/* Betalningsinformation för den ännu ej aktiverade Stripe-kassan. */
+.shop-payment {
+  margin-top:44px; padding:32px 34px 28px;
+  background:#f5f6f2; border:1px solid #dfe6df;
+}
+.shop-payment-heading {
+  display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+}
+.shop-payment h2 {
+  margin:0 0 12px; font-size:clamp(28px,3vw,38px);
+}
+.shop-payment-heading p:not(.shop-home-eyebrow) {
+  margin:0; font-size:15px; max-width:54ch;
+}
+.shop-payment-provider {
+  flex-shrink:0; padding:8px 12px; border:1px solid #bac9c2;
+  background:white; font-size:13px; color:#32534c;
+}
+.shop-payment-options {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px;
+  margin-top:24px;
+}
+.shop-payment-option {
+  display:flex; flex-wrap:wrap; align-items:center; gap:7px 10px;
+  padding:17px 16px; border:1px solid #d7e0d9; background:white;
+}
+.shop-payment-option-icon { font-size:20px; color:#1b645c; line-height:1; }
+.shop-payment-option strong { font-size:17px; }
+.shop-payment-option > span:last-child {
+  flex-basis:100%; font-size:12px; color:#5b6862; padding-left:30px;
+}
+.shop-payment-note {
+  max-width:none; margin:20px 0 0; font-size:13px; color:#59665f;
+}
+@media(max-width:720px) {
+  .shop-payment { padding:25px 20px; }
+  .shop-payment-heading { flex-direction:column; gap:12px; }
+  .shop-payment-provider { align-self:flex-start; }
+  .shop-payment-options { grid-template-columns:1fr; }
+}
