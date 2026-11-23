@@ -62,7 +62,16 @@ async function updateStock() {
   }
 }
 
-if (stockLabels.length || checkoutButtons.length) {
+// Visa konsekvent försäljningsstopp även om lager-API:t innehåller antal.
+const SALES_PAUSED = true;
+if (SALES_PAUSED) {
+  for (const label of stockLabels) label.textContent = "Slut i lager";
+  for (const button of checkoutButtons) {
+    button.disabled = true;
+    button.textContent = "Slut i lager";
+    button.onclick = null;
+  }
+} else if (stockLabels.length || checkoutButtons.length) {
   updateStock();
   window.addEventListener("pageshow", event => { if (event.persisted) updateStock(); });
 }
