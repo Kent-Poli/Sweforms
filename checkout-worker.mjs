@@ -32,9 +32,14 @@ async function checkout(req, env) {
     seen.add(item.id);
   }
   // Stock is checked again at checkout; this is not an inventory reservation.
-  const inventoryResponse = await fetch("https://sweforms-stripe-test.kent-poli.workers.dev/lagersaldo.json", {cache:"no-store"});
-  if (!inventoryResponse.ok) return reply({error:"Lagersaldot är tillfälligt otillgängligt."},503,origin);
-  const inventory = await inventoryResponse.json();
+  let inventory;
+  if (env.TEST_STOCK) {
+    inventory = JSON.parse(env.TEST_STOCK); // Isolated sandbox data, never live stock.
+  } else {
+    const inventoryResponse = await fetch("https://sweforms-stripe-test.kent-poli.workers.dev/lagersaldo.json", {cache:"no-store"});
+    if (!inventoryResponse.ok) return reply({error:"Lagersaldot är tillfälligt otillgängligt."},503,origin);
+    inventory = await inventoryResponse.json();
+  }
   if (input.items.some(item => !Number.isInteger(inventory[item.id]) || inventory[item.id] < item.quantity)) return reply({error:"Lagersaldot har ändrats. Kontrollera varukorgen."},409,origin);
   const priceObjects = await Promise.all(input.items.map(i => stripe("prices/" + PRODUCTS[i.id],env)));
   if (priceObjects.some(p => !p.active || p.currency !== "sek" || p.unit_amount !== PRICE || p.livemode)) return reply({error:"Priset kunde inte verifieras."},503,origin);
@@ -44,6 +49,7 @@ async function checkout(req, env) {
   if (!rate.active || rate.livemode || rate.fixed_amount?.currency !== "sek" || rate.fixed_amount?.amount !== (subtotal >= THRESHOLD ? 0 : 7900)) return reply({error:"Fraktpriset kunde inte verifieras."},503,origin);
   const form = new URLSearchParams();
   form.set("mode","payment");
+  form.set("adaptive_pricing[enabled]","false");
   form.set("success_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=complete&session_id={CHECKOUT_SESSION_ID}");
   form.set("cancel_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=cancelled");
   form.set("shipping_address_collection[allowed_countries][0]","SE");
