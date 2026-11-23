@@ -1,0 +1,117 @@
+/* SweForms Studio – butikens egna visuella uttryck. */
+.shop-page header { border-bottom-color:#e7e8e3; }
+.shop-page .header { gap:24px; }
+.shop-page header nav[aria-label="Huvudmeny"] {
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end;
+  gap:8px 23px;
+}
+.shop-page header nav[aria-label="Huvudmeny"] > a {
+  font-size:14px; font-weight:600; white-space:nowrap;
+}
+.shop-page header nav[aria-label="Huvudmeny"] > a[aria-current="page"] {
+  text-decoration:none; border-bottom:2px solid #087e8b;
+}
+.shop-page .cart-trigger {
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  min-height:44px; padding:9px 15px; border:1px solid #1c4140;
+  background:#1c4140; color:white; border-radius:3px; font-weight:600;
+  white-space:nowrap; cursor:pointer;
+}
+.shop-page .cart-trigger:hover { background:#28605c; border-color:#28605c; }
+.shop-page .cart-trigger svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.shop-page .cart-count {
+  display:inline-grid; place-items:center; min-width:22px; height:22px;
+  padding:0 5px; border-radius:12px; background:#fff; color:#1c4140; font-size:12px;
+}
+.shop-page .cart-dialog { border-radius:6px; }
+.shop-page .cart-empty { padding:16px 0 10px; }
+.shop-page .cart-empty p { max-width:45ch; }
+.shop-page .stock-checkout:disabled {
+  background:#e7eae5; border-color:#ccd2cb; color:#4a5650; cursor:not-allowed;
+}
+.shop-page .stock-checkout:disabled:hover {
+  background:#e7eae5; box-shadow:none; transform:none;
+}
+.shop-home-hero { background:#f1f1ec; }
+.shop-home-hero-inner {
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);
+  align-items:stretch; min-height:460px;
+}
+.shop-home-hero-copy {
+  align-self:center; padding:64px 52px 64px 0;
+}
+.shop-home-eyebrow {
+  margin:0 0 16px; font-size:12px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.16em; color:#44716c;
+}
+.shop-home-hero h1 { max-width:11ch; margin:0 0 20px; font-size:clamp(42px,4.7vw,70px); }
+.shop-home-hero-copy > p:not(.shop-home-eyebrow) { max-width:46ch; font-size:17px; }
+.shop-home-hero .button { margin-top:13px; }
+.shop-home-hero-photo { margin:0; position:relative; min-height:390px; overflow:hidden; }
+.shop-home-hero-photo img { width:100%; height:100%; position:absolute; inset:0; object-fit:cover; object-position:70% center; }
+.shop-home-benefits { background:#173638; color:#fff; }
+.shop-home-benefits .wrap {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px;
+  padding-block:15px;
+}
+.shop-home-benefits span { font-size:13px; text-align:center; color:#fff; }
+.shop-home-benefits span+span { border-left:1px solid #557071; }
+.shop-home-products { padding-top:58px; }
+.shop-home-products .shop-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.shop-home-products .shop-product {
+  padding:0 0 12px; border:1px solid #e4e7e0; background:white;
+}
+.shop-home-products .shop-product-photo { aspect-ratio:1.03; }
+.shop-home-products .shop-product-copy { padding:15px 18px 18px; }
+.shop-home-products .shop-product-copy h3 { font-size:clamp(23px,2.3vw,29px); }
+.shop-home-products .shop-product-copy .shop-product-status {
+  margin:9px 0 0; padding:0; background:none; color:#173638;
+  font-size:18px;
+}
+.shop-home-products .shop-product-copy [data-stock] {
+  display:inline-block; margin:7px 0 11px; padding:3px 10px;
+  border-radius:2px; background:#eff0ec; color:#58625d; font-size:12px; font-weight:700;
+}
+.shop-home-details { border-top:1px solid #e3e6e1; margin-top:42px; padding-top:38px; }
+.shop-home-details h2 { font-size:clamp(27px,3vw,37px); margin:0 0 18px; }
+.shop-home-extra { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.shop-home-extra a {
+  display:flex; flex-direction:column; justify-content:center; min-height:140px;
+  padding:26px; border:1px solid #e0e5de; background:#f6f7f3; text-decoration:none;
+}
+.shop-home-extra a:hover { border-color:#087e8b; }
+.shop-home-extra strong { display:block; font-size:22px; margin-bottom:8px; }
+.shop-home-extra span { font-size:14px; color:#59625c; }
+.shop-home-help {
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:20px; padding:26px 0; border-top:1px solid #e3e6e1;
+}
+.shop-home-help p { margin:0; }
+.shop-home-help a { font-weight:600; text-underline-offset:4px; }
+.shop-home-notice {
+  margin:18px 0 0; padding:11px 15px; border-left:3px solid #78988b;
+  background:#f4f6f1; color:#4a5952; max-width:none; font-size:14px;
+}
+@media(max-width:1050px) {
+  .shop-page .header { flex-wrap:wrap; justify-content:center; gap:14px; padding-block:14px; }
+  .shop-page header nav[aria-label="Huvudmeny"] { justify-content:center; }
+  .shop-home-hero-copy { padding-right:25px; }
+}
+@media(max-width:720px) {
+  .shop-home-hero-inner { grid-template-columns:1fr; }
+  .shop-home-hero-copy { padding:38px 0 26px; }
+  .shop-home-hero h1 { max-width:none; }
+  .shop-home-hero-photo { min-height:260px; }
+  .shop-home-benefits .wrap { grid-template-columns:1fr; gap:6px; }
+  .shop-home-benefits span+span { border-left:0; }
+  .shop-home-products .shop-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .shop-home-products { padding-top:38px; }
+}
+@media(max-width:480px) {
+  .shop-page header nav[aria-label="Huvudmeny"] { gap:5px 15px; }
+  .shop-page header nav[aria-label="Huvudmeny"] > a { font-size:13px; }
+  .shop-page .cart-trigger { width:100%; }
+  .shop-home-products .shop-grid { grid-template-columns:1fr; }
+  .shop-home-extra { grid-template-columns:1fr; }
+  .shop-home-hero-photo { min-height:220px; }
+}
