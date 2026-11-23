@@ -54,7 +54,18 @@ async function checkout(req, env) {
   form.set("cancel_url",env.PREVIEW_ORIGIN + "/studio/butik/?checkout=cancelled");
   form.set("shipping_address_collection[allowed_countries][0]","SE");
   form.set("phone_number_collection[enabled]","true");
-  form.set("shipping_options[0][shipping_rate]",selectedShipping);
+  // Checkout manual tax rates apply to line items, so paid shipping is a taxed line item.
+  if (subtotal < THRESHOLD) {
+    const index = input.items.length;
+    form.set("line_items["+index+"][price_data][currency]","sek");
+    form.set("line_items["+index+"][price_data][unit_amount]",String(rate.fixed_amount.amount));
+    form.set("line_items["+index+"][price_data][tax_behavior]","inclusive");
+    form.set("line_items["+index+"][price_data][product_data][name]","Standardfrakt Sverige");
+    form.set("line_items["+index+"][quantity]","1");
+    form.set("line_items["+index+"][tax_rates][0]",PRODUCT_TAX_RATE);
+  } else {
+    form.set("shipping_options[0][shipping_rate]",SHIPPING.free);
+  }
   input.items.forEach((item,index) => {
     form.set("line_items["+index+"][price]",PRODUCTS[item.id]);
     form.set("line_items["+index+"][quantity]",String(item.quantity));
