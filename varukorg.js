@@ -1,4 +1,19 @@
 (() => {
+  // Tillfälligt försäljningsstopp: inga köp eller varukorgsåtgärder kan startas.
+  // Ändra SALES_PAUSED till false först när kassa och lagersaldo är godkända.
+  const SALES_PAUSED = true;
+  if (SALES_PAUSED) {
+    try { localStorage.removeItem("sweforms-cart-v1"); } catch {}
+    document.querySelectorAll("[data-cart-add], [data-stock-checkout]").forEach(button => {
+      button.disabled = true;
+      button.textContent = "Slut i lager";
+      button.onclick = null;
+    });
+    document.querySelectorAll("[data-stock]").forEach(label => {
+      label.textContent = "Slut i lager";
+    });
+    return;
+  }
   const products = {
     sommarang: { name: "Sommaräng", image: "/images/sommarang-ljus-studio.png" },
     skogssjo: { name: "Skogssjö", image: "/images/skogssjo-ljus-studio.png" },
