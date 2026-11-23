@@ -12,6 +12,28 @@
     document.querySelectorAll("[data-stock]").forEach(label => {
       label.textContent = "Slut i lager";
     });
+
+    // Behåll en synlig varukorg i butiken medan försäljningen är pausad.
+    // Ingen produkt kan läggas till och ingen kassa eller Stripe-endpoint anropas.
+    const nav = document.querySelector('header nav[aria-label="Huvudmeny"]');
+    if (nav) {
+      const trigger = document.createElement("button");
+      trigger.type = "button";
+      trigger.className = "cart-trigger";
+      trigger.setAttribute("aria-haspopup", "dialog");
+      trigger.setAttribute("aria-label", "Öppna varukorgen, 0 varor");
+      trigger.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span>Varukorg</span><span class="cart-count" aria-hidden="true">0</span>';
+      nav.append(trigger);
+
+      const dialog = document.createElement("dialog");
+      dialog.className = "cart-dialog";
+      dialog.setAttribute("aria-labelledby", "cart-title");
+      dialog.innerHTML = '<div class="cart-top"><h2 id="cart-title">Din varukorg</h2><button type="button" data-close aria-label="Stäng varukorgen">✕</button></div><div class="cart-empty"><p>Din varukorg är tom.</p><p>Alla lampskärmar är för tillfället slut i lager. När försäljningen öppnar igen kan du lägga produkter här och gå vidare till Stripe-kassan.</p></div><p class="cart-note">Leverans inom Sverige. Priser inklusive moms.</p>';
+      document.body.append(dialog);
+      trigger.addEventListener("click", () => dialog.showModal());
+      dialog.querySelector("[data-close]").addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", event => { if (event.target === dialog) dialog.close(); });
+    }
     return;
   }
   const products = {
