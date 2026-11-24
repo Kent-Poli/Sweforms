@@ -5,6 +5,7 @@ import worker from "./checkout-live-worker.mjs";
 Object.defineProperty(globalThis, "crypto", {value:webcrypto, configurable:true});
 const sent = new Set();
 let requests = [];
+let failCustomer = false;
 const db = {
   prepare(sql) {
     return { bind(...args) {
@@ -32,7 +33,9 @@ globalThis.fetch = async (url, options) => {
   if (url.endsWith("/line_items?limit=100")) return Response.json({has_more:false,data:[{description:"Sommaräng",quantity:1,amount_total:44900}]});
   if (url.includes("api.stripe.com")) return Response.json(session);
   if (url === "https://api.resend.com/emails") {
-    requests.push(JSON.parse(options.body));
+    const message = JSON.parse(options.body);
+    requests.push(message);
+    if (failCustomer && message.to[0] === "customer@example.org") return new Response("error", {status:503});
     return Response.json({id:"email-id"});
   }
   throw new Error("Unexpected URL");
@@ -54,4 +57,13 @@ assert.equal(requests.length,2);
 assert.deepEqual(requests.map(x=>x.to[0]),["customer@example.org","owner@example.org"]);
 assert.equal((await webhook(session)).status,200);
 assert.equal(requests.length,2);
-console.log("Webhook signature, missing reservation, both emails and repeat delivery: OK");
+sent.clear(); requests=[]; failCustomer=true;
+assert.equal((await webhook(session)).status,500);
+assert.equal(requests.length,2);
+assert.equal(sent.has(sessionId+":owner"),true);
+assert.equal(sent.has(sessionId+":customer"),false);
+failCustomer=false;
+assert.equal((await webhook(session)).status,200);
+assert.equal(requests.length,3);
+assert.equal(requests[2].to[0],"customer@example.org");
+console.log("Webhook signature, reservation, independent emails and retries: OK");
