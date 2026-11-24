@@ -137,7 +137,38 @@ async function checkoutStatus(request, env) {
   if (session.livemode || session.id !== sessionId) return reply({error:"Invalid session"},400,origin);
   return reply({paid:session.payment_status === "paid", status:session.status},200,origin);
 }
-async function verifiedWebhook(request, env) {
+// Test-order notifications. Delivery failures return an error so Stripe can retry;
+ // Resend idempotency keys prevent duplicate messages on webhook replay.
+async function sendOrderEmails(env, sessionId) {
+  if (!env.RESEND_API_KEY || !env.OWNER_EMAIL) throw new Error("Email not configured");
+  const session = await stripe("checkout/sessions/" + encodeURIComponent(sessionId), env);
+  if (session.livemode || session.payment_status !== "paid") throw new Error("Unpaid test order");
+  const email = session.customer_details?.email;
+  if (!email) throw new Error("Customer email missing");
+  const result = await stripe("checkout/sessions/" + encodeURIComponent(sessionId) + "/line_items?limit=100", env);
+  if (result.has_more || !Array.isArray(result.data)) throw new Error("Incomplete order items");
+  const money = n => (n / 100).toFixed(2).replace(".", ",") + " kr";
+  const lines = result.data.map(item => (item.description || "Produkt") + " × " + item.quantity + " – " + money(item.amount_total)).join("\n");
+  const shipping = session.collected_information?.shipping_details || session.shipping_details;
+  const address = shipping?.address;
+  const destination = [shipping?.name, address?.line1, address?.line2, [address?.postal_code, address?.city].filter(Boolean).join(" "), address?.country].filter(Boolean).join("\n");
+  if (!address?.line1 || !address?.postal_code || !address?.city) throw new Error("Shipping address missing");
+  const total = money(session.amount_total);
+  const send = async (to, kind, subject, body) => {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {"Authorization":"Bearer " + env.RESEND_API_KEY, "Content-Type":"application/json", "Idempotency-Key":"sweforms-" + kind + "-" + sessionId},
+      body: JSON.stringify({from:"SweForms <order@mail.sweforms.se>",to:[to],subject,text:body}),
+      signal: AbortSignal.timeout(10000)
+    });
+    if (!response.ok) throw new Error("Email delivery not accepted");
+  };
+  await send(env.OWNER_EMAIL, "owner", "TEST: Ny beställning hos SweForms",
+    "En testbeställning har betalats. Inga riktiga pengar har dragits.\n\n" + lines + "\nTotalt: " + total + "\n\nÖppna beställningar: https://sweforms-order.kent-poli.workers.dev/");
+  await send(email, "customer", "TEST: Din orderbekräftelse från SweForms",
+    "Tack för din testbeställning! Inga riktiga pengar har dragits och ingen vara skickas.\n\n" + lines + "\nTotalt: " + total + "\n\nLeveransadress:\n" + destination + "\n\nKontakt: kontakt@sweforms.se");
+}
+\nasync function verifiedWebhook(request, env) {
   if (!env.STRIPE_WEBHOOK_SECRET) return reply({error:"Webhook not configured"},503);
   const header=request.headers.get("stripe-signature") || "", parts=header.split(",").map(v=>v.split("="));
   const timestamp=parts.find(([k])=>k==="t")?.[1], signatures=parts.filter(([k])=>k==="v1").map(([,v])=>v);
@@ -158,7 +189,7 @@ async function verifiedWebhook(request, env) {
   if (reservationId && /^[0-9a-f-]{36}$/.test(reservationId)) {
     if (!env.STOCK_DB) return reply({error:"Stock unavailable"},503);
     if (["checkout.session.completed","checkout.session.async_payment_succeeded"].includes(event.type) && event.data.object.payment_status === "paid") {
-      await settleStock(env.STOCK_DB,reservationId,true,event.data.object);
+      await settleStock(env.STOCK_DB,reservationId,true,event.data.object);\n      await sendOrderEmails(env,event.data.object.id);
     } else if (["checkout.session.expired","checkout.session.async_payment_failed"].includes(event.type)) {
       await settleStock(env.STOCK_DB,reservationId,false);
     }
