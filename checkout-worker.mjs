@@ -166,7 +166,7 @@ async function sendOrderEmails(env, sessionId) {
   await send(customerEmail, "customer", "TEST: Orderbekräftelse från SweForms",
     "Tack för din testbeställning! Detta är ett test och ingen riktig betalning har genomförts.\n\n" +
     lines + "\nTotalt: " + total + (addressLines ? "\n\nLeveransadress:\n" + addressLines : "") +
-    "\n\nFrågor? Kontakta oss på order@mail.sweforms.se.\n\nSweForms");
+    "\n\nFrågor? Kontakta oss via sweforms.se.\n\nSweForms");
   await send(env.OWNER_EMAIL, "owner", "TEST: Ny beställning hos SweForms",
     "En testbeställning har betalats. Inga riktiga pengar har dragits.\n\n" + lines + "\nTotalt: " + total + "\n\nÖppna beställningar: https://sweforms-order.kent-poli.workers.dev/");
 }
