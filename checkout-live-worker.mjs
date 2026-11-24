@@ -165,15 +165,14 @@ async function sendOrderEmails(env, sessionId) {
       .bind(sessionId,kind).run();
   };
   const customerEmail = session.customer_details?.email || session.customer_email;
-  if (!customerEmail) throw new Error("Customer email missing");
   const shipping = session.collected_information?.shipping_details || session.shipping_details;
   const address = shipping?.address;
   const addressLines = address ? [shipping.name, address.line1, address.line2,
     [address.postal_code, address.city].filter(Boolean).join(" "), address.country].filter(Boolean).join("\n") : "";
-  const outcomes = await Promise.allSettled([send(customerEmail, "customer", "Orderbekräftelse från SweForms",
+  const outcomes = await Promise.allSettled([customerEmail ? send(customerEmail, "customer", "Orderbekräftelse från SweForms",
     "Tack för din beställning hos SweForms!\n\n" +
     lines + "\nTotalt: " + total + (addressLines ? "\n\nLeveransadress:\n" + addressLines : "") +
-    "\n\nFrågor? Kontakta oss via sweforms.se.\n\nSweForms"),
+    "\n\nFrågor? Kontakta oss via sweforms.se.\n\nSweForms") : Promise.reject(new Error("Customer email missing")),
   send(env.OWNER_EMAIL, "owner", "Ny beställning hos SweForms",
     "En beställning har betalats.\n\n" + lines + "\nTotalt: " + total + "\n\nÖppna beställningar: https://sweforms-order.kent-poli.workers.dev/")]);
   if (outcomes.some(outcome => outcome.status === "rejected")) throw new Error("Order email failed");
