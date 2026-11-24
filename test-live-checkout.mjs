@@ -72,4 +72,8 @@ failCustomer=false;
 assert.equal((await webhook(session)).status,200);
 assert.equal(requests.length,3);
 assert.equal(requests[2].to[0],"customer@example.org");
+sent.clear(); requests=[]; session.customer_details={};
+assert.equal((await webhook(session)).status,500);
+assert.equal(requests.length,1);
+assert.equal(requests[0].to[0],"owner@example.org");
 console.log("Webhook signature, reservation, independent emails and retries: OK");
