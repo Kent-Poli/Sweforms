@@ -137,18 +137,21 @@ async function checkoutStatus(request, env) {
   if (!session.livemode || session.id !== sessionId) return reply({error:"Invalid session"},400,origin);
   return reply({paid:session.payment_status === "paid", status:session.status},200,origin);
 }
-// Test-order notifications. Delivery failures return an error so Stripe can retry;
- // Resend idempotency keys prevent duplicate messages on webhook replay.
+// Record accepted messages so webhook replays do not resend them after Resend's
+// idempotency window expires. Delivery still needs monitoring at the provider.
 async function sendOrderEmails(env, sessionId) {
   if (!env.RESEND_API_KEY || !env.OWNER_EMAIL) throw new Error("Email not configured");
   const session = await stripe("checkout/sessions/" + encodeURIComponent(sessionId), env);
-  if (!session.livemode || session.payment_status !== "paid") throw new Error("Unpaid test order");
+  if (!session.livemode || session.payment_status !== "paid") throw new Error("Unpaid order");
   const result = await stripe("checkout/sessions/" + encodeURIComponent(sessionId) + "/line_items?limit=100", env);
   if (result.has_more || !Array.isArray(result.data)) throw new Error("Incomplete order items");
   const money = n => (n / 100).toFixed(2).replace(".", ",") + " kr";
   const lines = result.data.map(item => (item.description || "Produkt") + " × " + item.quantity + " – " + money(item.amount_total)).join("\n");
   const total = money(session.amount_total);
   const send = async (to, kind, subject, body) => {
+    const sent = await env.STOCK_DB.prepare("SELECT 1 AS sent FROM email_deliveries WHERE session_id=? AND kind=?")
+      .bind(sessionId,kind).first();
+    if (sent) return;
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {"Authorization":"Bearer " + env.RESEND_API_KEY, "Content-Type":"application/json", "Idempotency-Key":"sweforms-" + kind + "-" + sessionId},
@@ -156,6 +159,8 @@ async function sendOrderEmails(env, sessionId) {
       signal: AbortSignal.timeout(10000)
     });
     if (!response.ok) throw new Error("Email delivery not accepted");
+    await env.STOCK_DB.prepare("INSERT OR IGNORE INTO email_deliveries(session_id,kind) VALUES (?,?)")
+      .bind(sessionId,kind).run();
   };
   const customerEmail = session.customer_details?.email || session.customer_email;
   if (!customerEmail) throw new Error("Customer email missing");
@@ -189,6 +194,9 @@ async function verifiedWebhook(request, env) {
   const event=JSON.parse(body);
   if (!event.livemode) return reply({error:"Test events disabled"},400);
   const reservationId = event.data?.object?.metadata?.reservation_id;
+  if (["checkout.session.completed","checkout.session.async_payment_succeeded"].includes(event.type) &&
+      event.data?.object?.payment_status === "paid" && !/^[0-9a-f-]{36}$/.test(reservationId || ""))
+    throw new Error("Paid order missing reservation");
   if (reservationId && /^[0-9a-f-]{36}$/.test(reservationId)) {
     if (!env.STOCK_DB) return reply({error:"Stock unavailable"},503);
     if (["checkout.session.completed","checkout.session.async_payment_succeeded"].includes(event.type) && event.data.object.payment_status === "paid") {
@@ -216,4 +224,5 @@ export default { async fetch(request,env) {
     return reply({error:"Not found"},404);
   } catch { return reply({error:"Något gick fel. Försök igen."},500,origin===env.PREVIEW_ORIGIN?origin:null); }
 }};
+
 
