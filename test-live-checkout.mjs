@@ -41,6 +41,12 @@ globalThis.fetch = async (url, options) => {
   throw new Error("Unexpected URL");
 };
 const env = {STRIPE_SECRET_KEY:"sk_live_example", STRIPE_WEBHOOK_SECRET:"secret", RESEND_API_KEY:"test", OWNER_EMAIL:"owner@example.org", STOCK_DB:db};
+const disabled = await worker.fetch(new Request("https://worker.example/checkout", {
+  method:"POST", headers:{"Origin":"https://sweforms.se","Content-Type":"application/json"},
+  body:JSON.stringify({items:[{id:"sommarang",quantity:1}]})
+}), {...env, PREVIEW_ORIGIN:"https://sweforms.se"});
+assert.equal(disabled.status,503);
+assert.equal(requests.length,0);
 async function webhook(object, type="checkout.session.completed", valid=true) {
   const body=JSON.stringify({livemode:true,type,data:{object}});
   const timestamp=Math.floor(Date.now()/1000).toString();
