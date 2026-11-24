@@ -168,7 +168,8 @@ async function sendOrderEmails(env, sessionId) {
   await send(email, "customer", "TEST: Din orderbekräftelse från SweForms",
     "Tack för din testbeställning! Inga riktiga pengar har dragits och ingen vara skickas.\n\n" + lines + "\nTotalt: " + total + "\n\nLeveransadress:\n" + destination + "\n\nKontakt: kontakt@sweforms.se");
 }
-\nasync function verifiedWebhook(request, env) {
+
+async function verifiedWebhook(request, env) {
   if (!env.STRIPE_WEBHOOK_SECRET) return reply({error:"Webhook not configured"},503);
   const header=request.headers.get("stripe-signature") || "", parts=header.split(",").map(v=>v.split("="));
   const timestamp=parts.find(([k])=>k==="t")?.[1], signatures=parts.filter(([k])=>k==="v1").map(([,v])=>v);
@@ -189,7 +190,8 @@ async function sendOrderEmails(env, sessionId) {
   if (reservationId && /^[0-9a-f-]{36}$/.test(reservationId)) {
     if (!env.STOCK_DB) return reply({error:"Stock unavailable"},503);
     if (["checkout.session.completed","checkout.session.async_payment_succeeded"].includes(event.type) && event.data.object.payment_status === "paid") {
-      await settleStock(env.STOCK_DB,reservationId,true,event.data.object);\n      await sendOrderEmails(env,event.data.object.id);
+      await settleStock(env.STOCK_DB,reservationId,true,event.data.object);
+      await sendOrderEmails(env,event.data.object.id);
     } else if (["checkout.session.expired","checkout.session.async_payment_failed"].includes(event.type)) {
       await settleStock(env.STOCK_DB,reservationId,false);
     }
