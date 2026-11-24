@@ -174,7 +174,10 @@ async function sendOrderEmails(env, sessionId) {
     lines + "\nTotalt: " + total + (addressLines ? "\n\nLeveransadress:\n" + addressLines : "") +
     "\n\nFrågor? Kontakta oss via sweforms.se.\n\nSweForms") : Promise.reject(new Error("Customer email missing")),
   send(env.OWNER_EMAIL, "owner", "Ny beställning hos SweForms",
-    "En beställning har betalats.\n\n" + lines + "\nTotalt: " + total + "\n\nÖppna beställningar: https://sweforms-order.kent-poli.workers.dev/")]);
+    "En beställning har betalats.\n\n" + lines + "\nTotalt: " + total +
+    (customerEmail ? "\n\nKundens e-post: " + customerEmail : "\n\nKundens e-post saknas.") +
+    (addressLines ? "\n\nLeveransadress:\n" + addressLines : "\n\nLeveransadress saknas. Kontrollera beställningen i Stripe.") +
+    "\n\nÖppna beställningar: https://sweforms-order.kent-poli.workers.dev/")]);
   if (outcomes.some(outcome => outcome.status === "rejected")) throw new Error("Order email failed");
 }
 
