@@ -1,7 +1,10 @@
 (() => {
   // Tillfälligt försäljningsstopp: inga köp eller varukorgsåtgärder kan startas.
   // Ändra SALES_PAUSED till false först när kassa och lagersaldo är godkända.
-  const SALES_PAUSED = true;
+  const params = new URLSearchParams(location.search);
+  if (params.get("testbutik") === "1") sessionStorage.setItem("sweforms-test-mode", "1");
+  if (params.get("avsluta-test") === "1") sessionStorage.removeItem("sweforms-test-mode");
+  const SALES_PAUSED = sessionStorage.getItem("sweforms-test-mode") !== "1";
   if (SALES_PAUSED) {
     try { localStorage.removeItem("sweforms-cart-v1"); } catch {}
     document.querySelectorAll("[data-cart-add], [data-stock-checkout]").forEach(button => {
@@ -47,7 +50,7 @@
   const banner = document.createElement("p");
   banner.setAttribute("role", "status");
   banner.style.cssText = "margin:0;padding:12px;text-align:center;background:#fff1c2;color:#382b00;font-weight:700";
-  banner.textContent = "TESTLÄGE – inga riktiga köp eller leveranser. Använd endast Stripes testkort.";
+  banner.textContent = "TESTLÄGE: Butiken är under uppbyggnad. Inga riktiga köp eller leveranser görs. Endast testkort får användas.";
   document.body.prepend(banner);
   let cart = {};
   try {
@@ -153,7 +156,7 @@
     button.onclick = () => { cart[id] = Math.min((cart[id] || 0) + 1, 99); save(); dialog.showModal(); };
     fetch("https://sweforms-kassa-sandbox.kent-poli.workers.dev/lagersaldo.json", {cache:"no-store"})
       .then(r => { if (!r.ok) throw Error(); return r.json(); })
-      .then(stock => { if (Number.isInteger(stock[id]) && stock[id] > 0) { button.disabled = false; button.textContent = "Lägg i varukorgen"; } else if (stock[id] === 0) { button.textContent = "Slut i lager"; } else { button.textContent = "Lagersaldo otillgängligt"; } })
+      .then(stock => { if (Number.isInteger(stock[id]) && stock[id] > 0) { button.disabled = false; button.textContent = "Lägg i varukorgen"; document.querySelectorAll(`[data-stock="${id}"]`).forEach(label => label.textContent = `${stock[id]} st i testlager`); } else if (stock[id] === 0) { button.textContent = "Slut i lager"; } else { button.textContent = "Lagersaldo otillgängligt"; } })
       .catch(() => { button.textContent = "Lagersaldo otillgängligt"; });
   }
   window.addEventListener("storage", event => { if (event.key === key) location.reload(); });
