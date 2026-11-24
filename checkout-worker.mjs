@@ -157,6 +157,16 @@ async function sendOrderEmails(env, sessionId) {
     });
     if (!response.ok) throw new Error("Email delivery not accepted");
   };
+  const customerEmail = session.customer_details?.email || session.customer_email;
+  if (!customerEmail) throw new Error("Customer email missing");
+  const shipping = session.collected_information?.shipping_details || session.shipping_details;
+  const address = shipping?.address;
+  const addressLines = address ? [shipping.name, address.line1, address.line2,
+    [address.postal_code, address.city].filter(Boolean).join(" "), address.country].filter(Boolean).join("\n") : "";
+  await send(customerEmail, "customer", "TEST: Orderbekräftelse från SweForms",
+    "Tack för din testbeställning! Detta är ett test och ingen riktig betalning har genomförts.\n\n" +
+    lines + "\nTotalt: " + total + (addressLines ? "\n\nLeveransadress:\n" + addressLines : "") +
+    "\n\nFrågor? Kontakta oss på order@mail.sweforms.se.\n\nSweForms");
   await send(env.OWNER_EMAIL, "owner", "TEST: Ny beställning hos SweForms",
     "En testbeställning har betalats. Inga riktiga pengar har dragits.\n\n" + lines + "\nTotalt: " + total + "\n\nÖppna beställningar: https://sweforms-order.kent-poli.workers.dev/");
 }
