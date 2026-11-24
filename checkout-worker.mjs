@@ -47,6 +47,12 @@ async function settleStock(db, reservationId, paid, session) {
         WHERE json_extract((SELECT items FROM reservations WHERE id=? AND status='held'), '$.'||sku) IS NOT NULL`).bind(reservationId,reservationId),
       db.prepare("UPDATE reservations SET status='paid' WHERE id=? AND status='held'").bind(reservationId)
     ]);
+    // Do not acknowledge a payment unless both the order and reservation are recorded.
+    // Stripe can retry when an event arrives after a reservation was released.
+    const recorded = await db.prepare(`SELECT 1 AS ok FROM orders o JOIN reservations r
+      ON r.id=? AND r.status='paid' WHERE o.session_id=? AND o.payment_id=?`)
+      .bind(reservationId,session.id,paymentId).first();
+    if (!recorded) throw new Error("Paid order needs reconciliation");
   } else {
     await db.prepare("UPDATE reservations SET status='released' WHERE id=? AND status='held'").bind(reservationId).run();
   }
