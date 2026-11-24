@@ -143,16 +143,10 @@ async function sendOrderEmails(env, sessionId) {
   if (!env.RESEND_API_KEY || !env.OWNER_EMAIL) throw new Error("Email not configured");
   const session = await stripe("checkout/sessions/" + encodeURIComponent(sessionId), env);
   if (session.livemode || session.payment_status !== "paid") throw new Error("Unpaid test order");
-  const email = session.customer_details?.email;
-  if (!email) throw new Error("Customer email missing");
   const result = await stripe("checkout/sessions/" + encodeURIComponent(sessionId) + "/line_items?limit=100", env);
   if (result.has_more || !Array.isArray(result.data)) throw new Error("Incomplete order items");
   const money = n => (n / 100).toFixed(2).replace(".", ",") + " kr";
   const lines = result.data.map(item => (item.description || "Produkt") + " × " + item.quantity + " – " + money(item.amount_total)).join("\n");
-  const shipping = session.collected_information?.shipping_details || session.shipping_details;
-  const address = shipping?.address;
-  const destination = [shipping?.name, address?.line1, address?.line2, [address?.postal_code, address?.city].filter(Boolean).join(" "), address?.country].filter(Boolean).join("\n");
-  if (!address?.line1 || !address?.postal_code || !address?.city) throw new Error("Shipping address missing");
   const total = money(session.amount_total);
   const send = async (to, kind, subject, body) => {
     const response = await fetch("https://api.resend.com/emails", {
@@ -165,8 +159,6 @@ async function sendOrderEmails(env, sessionId) {
   };
   await send(env.OWNER_EMAIL, "owner", "TEST: Ny beställning hos SweForms",
     "En testbeställning har betalats. Inga riktiga pengar har dragits.\n\n" + lines + "\nTotalt: " + total + "\n\nÖppna beställningar: https://sweforms-order.kent-poli.workers.dev/");
-  await send(email, "customer", "TEST: Din orderbekräftelse från SweForms",
-    "Tack för din testbeställning! Inga riktiga pengar har dragits och ingen vara skickas.\n\n" + lines + "\nTotalt: " + total + "\n\nLeveransadress:\n" + destination + "\n\nKontakt: kontakt@sweforms.se");
 }
 
 async function verifiedWebhook(request, env) {
