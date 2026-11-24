@@ -32,10 +32,16 @@ async function reserveStock(db, id, items) {
     )`).bind(id, quantities, quantities).run();
   return result.meta.changes === 1;
 }
-async function settleStock(db, reservationId, paid) {
+async function settleStock(db, reservationId, paid, session) {
   if (paid) {
-    // D1 batch is atomic: only a held reservation can decrement inventory, once.
+    // Register the verified order and adjust stock in the same transaction.
+    const paymentId = typeof session?.payment_intent === "string" ? session.payment_intent : session?.payment_intent?.id;
+    if (!/^cs_test_[A-Za-z0-9]+$/.test(session?.id || "") || !/^pi_[A-Za-z0-9]+$/.test(paymentId || "")) throw new Error("Invalid paid session");
+    const paidAt = Math.floor(Date.now() / 1000);
     await db.batch([
+      db.prepare(`INSERT OR IGNORE INTO orders(session_id,payment_id,paid_at,status)
+        SELECT ?, ?, ?, 'new' WHERE EXISTS
+        (SELECT 1 FROM reservations WHERE id=? AND status='held')`).bind(session.id,paymentId,paidAt,reservationId),
       db.prepare(`UPDATE inventory SET quantity=quantity-CAST(json_extract(
         (SELECT items FROM reservations WHERE id=?), '$.'||sku) AS INTEGER)
         WHERE json_extract((SELECT items FROM reservations WHERE id=? AND status='held'), '$.'||sku) IS NOT NULL`).bind(reservationId,reservationId),
@@ -146,7 +152,7 @@ async function verifiedWebhook(request, env) {
   if (reservationId && /^[0-9a-f-]{36}$/.test(reservationId)) {
     if (!env.STOCK_DB) return reply({error:"Stock unavailable"},503);
     if (["checkout.session.completed","checkout.session.async_payment_succeeded"].includes(event.type) && event.data.object.payment_status === "paid") {
-      await settleStock(env.STOCK_DB,reservationId,true);
+      await settleStock(env.STOCK_DB,reservationId,true,event.data.object);
     } else if (["checkout.session.expired","checkout.session.async_payment_failed"].includes(event.type)) {
       await settleStock(env.STOCK_DB,reservationId,false);
     }
