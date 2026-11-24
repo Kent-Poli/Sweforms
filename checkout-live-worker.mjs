@@ -168,12 +168,13 @@ async function sendOrderEmails(env, sessionId) {
   const address = shipping?.address;
   const addressLines = address ? [shipping.name, address.line1, address.line2,
     [address.postal_code, address.city].filter(Boolean).join(" "), address.country].filter(Boolean).join("\n") : "";
-  await send(customerEmail, "customer", "Orderbekräftelse från SweForms",
+  const outcomes = await Promise.allSettled([send(customerEmail, "customer", "Orderbekräftelse från SweForms",
     "Tack för din beställning hos SweForms!\n\n" +
     lines + "\nTotalt: " + total + (addressLines ? "\n\nLeveransadress:\n" + addressLines : "") +
-    "\n\nFrågor? Kontakta oss via sweforms.se.\n\nSweForms");
-  await send(env.OWNER_EMAIL, "owner", "Ny beställning hos SweForms",
-    "En beställning har betalats.\n\n" + lines + "\nTotalt: " + total + "\n\nÖppna beställningar: https://sweforms-order.kent-poli.workers.dev/");
+    "\n\nFrågor? Kontakta oss via sweforms.se.\n\nSweForms"),
+  send(env.OWNER_EMAIL, "owner", "Ny beställning hos SweForms",
+    "En beställning har betalats.\n\n" + lines + "\nTotalt: " + total + "\n\nÖppna beställningar: https://sweforms-order.kent-poli.workers.dev/")]);
+  if (outcomes.some(outcome => outcome.status === "rejected")) throw new Error("Order email failed");
 }
 
 async function verifiedWebhook(request, env) {
