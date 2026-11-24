@@ -59,7 +59,7 @@ async function settleStock(db, reservationId, paid, session) {
 }
 async function availableStock(request, env) {
   const origin = request.headers.get("Origin");
-  if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !env.STRIPE_SECRET_KEY?.startsWith("sk_live_") || !env.STOCK_DB) return reply({error:"Not configured"},403);
+  if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !/^(sk|rk)_live_/.test(env.STRIPE_SECRET_KEY || "") || !env.STOCK_DB) return reply({error:"Not configured"},403);
   const result = await env.STOCK_DB.prepare(`SELECT i.sku, i.quantity - COALESCE((
     SELECT SUM(CAST(json_extract(r.items, '$.' || i.sku) AS INTEGER))
     FROM reservations r WHERE r.status='held'),0) AS available FROM inventory i`).all();
@@ -72,7 +72,9 @@ async function availableStock(request, env) {
 }
 async function checkout(req, env) {
   const origin = req.headers.get("Origin");
-  if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !env.STRIPE_SECRET_KEY?.startsWith("sk_live_")) return reply({error:"Kassan är inte konfigurerad."}, 403);
+  // A deployed draft must never accept a real order until explicitly enabled.
+  if (env.CHECKOUT_ENABLED !== "true") return reply({error:"Kassan är stängd."},503,origin === env.PREVIEW_ORIGIN ? origin : null);
+  if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !/^(sk|rk)_live_/.test(env.STRIPE_SECRET_KEY || "")) return reply({error:"Kassan är inte konfigurerad."}, 403);
   if (!(req.headers.get("content-type") || "").startsWith("application/json")) return reply({error:"Ogiltig förfrågan."}, 400, origin);
   const input = await req.json();
   if (!input || !Array.isArray(input.items) || input.items.length < 1 || input.items.length > 3) return reply({error:"Ogiltig varukorg."}, 400, origin);
@@ -130,7 +132,7 @@ async function checkout(req, env) {
 }
 async function checkoutStatus(request, env) {
   const origin = request.headers.get("Origin");
-  if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !env.STRIPE_SECRET_KEY?.startsWith("sk_live_")) return reply({error:"Not configured"},403);
+  if (!env.PREVIEW_ORIGIN || origin !== env.PREVIEW_ORIGIN || !/^(sk|rk)_live_/.test(env.STRIPE_SECRET_KEY || "")) return reply({error:"Not configured"},403);
   const sessionId = new URL(request.url).searchParams.get("session_id");
   if (!/^cs_live_[a-zA-Z0-9]+$/.test(sessionId || "")) return reply({error:"Invalid session"},400,origin);
   const session = await stripe("checkout/sessions/" + encodeURIComponent(sessionId),env);
