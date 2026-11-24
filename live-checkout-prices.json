@@ -1,0 +1,11 @@
+{
+  "mode": "live",
+  "currency": "sek",
+  "unit_amount": 44900,
+  "products": {
+    "sommarang": "price_1UeyowF5PTt3WP4lZ72JeNSK",
+    "skogssjo": "price_1UeypHF5PTt3WP4lksxfgkvi",
+    "midvinternatt": "price_1UeypnF5PTt3WP4lBFvre4De"
+  },
+  "status": "PREPARATION_ONLY_NOT_CONNECTED"
+}
