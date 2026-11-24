@@ -7,5 +7,10 @@
     "skogssjo": "price_1UeypHF5PTt3WP4lksxfgkvi",
     "midvinternatt": "price_1UeypnF5PTt3WP4lBFvre4De"
   },
-  "status": "PREPARATION_ONLY_NOT_CONNECTED"
+  "status": "PREPARATION_ONLY_NOT_CONNECTED",
+  "shipping": {
+    "standard": "shr_1UeyvoF5PTt3WP4l1RhCNuHK",
+    "free": "shr_1Ueyw5F5PTt3WP4lprWRTDa4"
+  },
+  "inclusive_tax_rate": "txr_1UeyqaF5PTt3WP4lIXs4UUke"
 }
