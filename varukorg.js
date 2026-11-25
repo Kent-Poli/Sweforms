@@ -162,6 +162,16 @@
       .then(stock => { if (Number.isInteger(stock[id]) && stock[id] > 0) { button.disabled = false; button.textContent = "Lägg i varukorgen"; document.querySelectorAll(`[data-stock="${id}"]`).forEach(label => label.textContent = `${stock[id]} st i ${testMode ? "testlager" : "lager"}`); } else if (stock[id] === 0) { button.textContent = "Slut i lager"; } else { button.textContent = "Lagersaldo otillgängligt"; } })
       .catch(() => { button.textContent = "Lagersaldo otillgängligt"; });
   }
+  // Show available stock on overview pages that do not have add-to-cart buttons.
+  if (!document.querySelector("[data-cart-add]")) {
+    fetch(checkoutEndpoint.slice(0, -"checkout".length) + "lagersaldo.json", {cache:"no-store"})
+      .then(r => { if (!r.ok) throw Error(); return r.json(); })
+      .then(stock => document.querySelectorAll("[data-stock]").forEach(label => {
+        const qty = stock[label.dataset.stock];
+        label.textContent = Number.isInteger(qty) && qty >= 0 ? (qty ? `${qty} st i ${testMode ? "testlager" : "lager"}` : "Slut i lager") : "Lagersaldo otillgängligt";
+      }))
+      .catch(() => document.querySelectorAll("[data-stock]").forEach(label => label.textContent = "Lagersaldo otillgängligt"));
+  }
   window.addEventListener("storage", event => { if (event.key === key) location.reload(); });
   render();
 })();
