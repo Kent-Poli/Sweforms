@@ -4,7 +4,9 @@
   const params = new URLSearchParams(location.search);
   if (params.get("testbutik") === "1") sessionStorage.setItem("sweforms-test-mode", "1");
   if (params.get("avsluta-test") === "1") sessionStorage.removeItem("sweforms-test-mode");
-  const SALES_PAUSED = sessionStorage.getItem("sweforms-test-mode") !== "1";
+  const LIVE_SALES_ENABLED = false; // Öppnas först efter Kents godkännande.
+  const testMode = !LIVE_SALES_ENABLED && sessionStorage.getItem("sweforms-test-mode") === "1";
+  const SALES_PAUSED = !LIVE_SALES_ENABLED && !testMode;
   if (SALES_PAUSED) {
     try { localStorage.removeItem("sweforms-cart-v1"); } catch {}
     document.querySelectorAll("[data-cart-add], [data-stock-checkout]").forEach(button => {
@@ -46,12 +48,13 @@
   };
   const price = 449, shipping = 79, threshold = 1000, key = "sweforms-cart-v1";
   // Set this to the isolated test worker URL after the test environment is deployed.
-  const checkoutEndpoint = "https://sweforms-kassa-sandbox.kent-poli.workers.dev/checkout";
+  const checkoutEndpoint = (testMode ? "https://sweforms-kassa-sandbox.kent-poli.workers.dev/" : "https://sweforms-kassa-live.kent-poli.workers.dev/") + "checkout";
+  const sessionPattern = testMode ? /^cs_test_[a-zA-Z0-9]+$/ : /^cs_live_[a-zA-Z0-9]+$/;
   const banner = document.createElement("p");
   banner.setAttribute("role", "status");
   banner.style.cssText = "margin:0;padding:12px;text-align:center;background:#fff1c2;color:#382b00;font-weight:700";
   banner.textContent = "TESTLÄGE: Butiken är under uppbyggnad. Inga riktiga köp eller leveranser görs. Endast testkort får användas.";
-  document.body.prepend(banner);
+  if (testMode) document.body.prepend(banner);
   let cart = {};
   try {
     const saved = JSON.parse(localStorage.getItem(key) || "{}");
@@ -103,7 +106,7 @@
       const response = await fetch(checkoutEndpoint, {method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({items})});
       const data = await response.json();
       if (!response.ok || !data.url || new URL(data.url).origin !== "https://checkout.stripe.com") throw new Error(data.error || "Kunde inte öppna kassan.");
-      if (!/^cs_test_[a-zA-Z0-9]+$/.test(data.sessionId || "")) throw new Error("Ogiltig kassa");
+      if (!sessionPattern.test(data.sessionId || "")) throw new Error("Ogiltig kassa");
       sessionStorage.setItem("sweforms-pending-" + data.sessionId, JSON.stringify(cart));
       location.assign(data.url);
     } catch (error) {
@@ -120,7 +123,7 @@
     message.textContent = "Kontrollerar betalningen …";
     (async () => {
       try {
-        if (!checkoutEndpoint || !/^cs_test_[a-zA-Z0-9]+$/.test(sessionId || "")) throw new Error();
+        if (!checkoutEndpoint || !sessionPattern.test(sessionId || "")) throw new Error();
         const response = await fetch(checkoutEndpoint.slice(0, -"checkout".length) + "checkout-status" + "?session_id=" + encodeURIComponent(sessionId));
         if (!response.ok) throw new Error();
         const result = await response.json();
@@ -154,9 +157,9 @@
     const id = button.dataset.cartAdd;
     if (!products[id]) continue;
     button.onclick = () => { cart[id] = Math.min((cart[id] || 0) + 1, 99); save(); dialog.showModal(); };
-    fetch("https://sweforms-kassa-sandbox.kent-poli.workers.dev/lagersaldo.json", {cache:"no-store"})
+    fetch(checkoutEndpoint.slice(0, -"checkout".length) + "lagersaldo.json", {cache:"no-store"})
       .then(r => { if (!r.ok) throw Error(); return r.json(); })
-      .then(stock => { if (Number.isInteger(stock[id]) && stock[id] > 0) { button.disabled = false; button.textContent = "Lägg i varukorgen"; document.querySelectorAll(`[data-stock="${id}"]`).forEach(label => label.textContent = `${stock[id]} st i testlager`); } else if (stock[id] === 0) { button.textContent = "Slut i lager"; } else { button.textContent = "Lagersaldo otillgängligt"; } })
+      .then(stock => { if (Number.isInteger(stock[id]) && stock[id] > 0) { button.disabled = false; button.textContent = "Lägg i varukorgen"; document.querySelectorAll(`[data-stock="${id}"]`).forEach(label => label.textContent = `${stock[id]} st i ${testMode ? "testlager" : "lager"}`); } else if (stock[id] === 0) { button.textContent = "Slut i lager"; } else { button.textContent = "Lagersaldo otillgängligt"; } })
       .catch(() => { button.textContent = "Lagersaldo otillgängligt"; });
   }
   window.addEventListener("storage", event => { if (event.key === key) location.reload(); });
