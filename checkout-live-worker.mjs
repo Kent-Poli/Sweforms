@@ -17,7 +17,11 @@ async function stripe(path, env, options = {}) {
   const res = await fetch("https://api.stripe.com/v1/" + path, {
     ...options, headers: {Authorization: "Bearer " + env.STRIPE_SECRET_KEY, ...options.headers}
   });
-  if (!res.ok) throw new Error("Stripe API unavailable");
+  if (!res.ok) {
+    const error = new Error("Stripe API unavailable");
+    error.stripeStatus = res.status;
+    throw error;
+  }
   return res.json();
 }
 async function reserveStock(db, id, items) {
@@ -133,8 +137,31 @@ async function checkout(req, env) {
   let session;
   try {
     session = await stripe("checkout/sessions",env,options);
-  } catch {
-    session = await stripe("checkout/sessions",env,options);
+  } catch (error) {
+    // A definitive validation/authentication rejection on the first attempt
+    // cannot have created a session, so its hold can safely be released.
+    if ([400,401,403,404,422].includes(error.stripeStatus)) {
+      await settleStock(env.STOCK_DB,reservationId,false);
+      throw error;
+    }
+    try {
+      session = await stripe("checkout/sessions",env,options);
+    } catch (retryError) {
+      // A timeout or server error can hide a successfully created session.
+      // Keep the hold and alert the owner; never release it based on a guess.
+      console.error("Checkout reservation requires review", reservationId);
+      if (env.RESEND_API_KEY && env.OWNER_EMAIL) {
+        try {
+          const alert = await fetch("https://api.resend.com/emails", {method:"POST", signal:AbortSignal.timeout(8000),
+            headers:{Authorization:"Bearer " + env.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"sweforms-hold-" + reservationId},
+            body:JSON.stringify({from:"SweForms <order@mail.sweforms.se>",to:[env.OWNER_EMAIL],
+              subject:"SweForms: kontrollera en lagerreservation",
+              text:"Kassan kunde inte bekräfta om Stripe skapade en betalningssida. Kontrollera Stripe och lagret innan reservationen släpps. Referens: " + reservationId})});
+          if (!alert.ok) console.error("Reservation alert not accepted", reservationId);
+        } catch { console.error("Reservation alert failed", reservationId); }
+      }
+      throw retryError;
+    }
   }
   if (!session.livemode || !session.url || new URL(session.url).hostname !== "checkout.stripe.com") throw new Error("Invalid Stripe session");
   return reply({url:session.url, sessionId:session.id},200,origin);
