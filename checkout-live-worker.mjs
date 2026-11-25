@@ -178,6 +178,12 @@ async function sendOrderEmails(env, sessionId) {
   const address = shipping?.address;
   const addressLines = address ? [shipping.name, address.line1, address.line2,
     [address.postal_code, address.city].filter(Boolean).join(" "), address.country].filter(Boolean).join("\n") : "";
+  // Save fulfillment details independently of email delivery so the private
+  // order board can display them even if the mail provider is unavailable.
+  await env.STOCK_DB.prepare(`INSERT INTO order_details(session_id,customer_email,shipping_address,items,total)
+    VALUES (?,?,?,?,?) ON CONFLICT(session_id) DO UPDATE SET customer_email=excluded.customer_email,
+    shipping_address=excluded.shipping_address,items=excluded.items,total=excluded.total`)
+    .bind(sessionId,customerEmail || "",addressLines,lines,total).run();
   const outcomes = await Promise.allSettled([customerEmail ? send(customerEmail, "customer", "Orderbekräftelse från SweForms",
     "Tack för din beställning hos SweForms!\n\n" +
     lines + "\nTotalt: " + total + (addressLines ? "\n\nLeveransadress:\n" + addressLines : "") +
