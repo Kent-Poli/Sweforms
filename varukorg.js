@@ -4,7 +4,7 @@
   const params = new URLSearchParams(location.search);
   if (params.get("testbutik") === "1") sessionStorage.setItem("sweforms-test-mode", "1");
   if (params.get("avsluta-test") === "1") sessionStorage.removeItem("sweforms-test-mode");
-  const LIVE_SALES_ENABLED = false; // Öppnas först efter Kents godkännande.
+  const LIVE_SALES_ENABLED = true; // Skarp butik och riktigt lager.
   const testMode = !LIVE_SALES_ENABLED && sessionStorage.getItem("sweforms-test-mode") === "1";
   const SALES_PAUSED = !LIVE_SALES_ENABLED && !testMode;
   if (SALES_PAUSED) {
