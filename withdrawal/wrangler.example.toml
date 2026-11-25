@@ -1,0 +1,17 @@
+name = "sweforms-angra-kop"
+main = "worker.mjs"
+compatibility_date = "2026-11-25"
+workers_dev = false
+
+[vars]
+PUBLIC_ORIGIN = "https://sweforms.se"
+# TURNSTILE_SITE_KEY, FROM_EMAIL, OWNER_EMAIL: configure at deployment.
+
+# Add actual database_name and database_id:
+# [[d1_databases]]
+# binding = "DB"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+# Route must be configured and verified separately.
