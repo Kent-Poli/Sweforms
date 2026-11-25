@@ -53,7 +53,7 @@
   const banner = document.createElement("p");
   banner.setAttribute("role", "status");
   banner.style.cssText = "margin:0;padding:12px;text-align:center;background:#fff1c2;color:#382b00;font-weight:700";
-  banner.textContent = "TESTLÄGE: Butiken är under uppbyggnad. Inga riktiga köp eller leveranser görs. Endast testkort får användas.";
+  banner.textContent = "TESTLÄGE: Butiken är under uppbyggnad. Inga riktiga köp eller leveranser görs. Använd endast testkort.";
   if (testMode) document.body.prepend(banner);
   let cart = {};
   try {
