@@ -39,18 +39,27 @@ async function settleStock(db, reservationId, paid, session) {
     if (!/^cs_live_[A-Za-z0-9]+$/.test(session?.id || "") || !/^pi_[A-Za-z0-9]+$/.test(paymentId || "")) throw new Error("Invalid paid session");
     const paidAt = Math.floor(Date.now() / 1000);
     await db.batch([
+      db.prepare(`INSERT OR IGNORE INTO checkout_settlements(reservation_id,session_id,payment_id)
+        SELECT ?, ?, ? WHERE EXISTS (SELECT 1 FROM reservations WHERE id=? AND status='held')
+        AND NOT EXISTS (SELECT 1 FROM orders WHERE session_id=? OR payment_id=?)`)
+        .bind(reservationId,session.id,paymentId,reservationId,session.id,paymentId),
       db.prepare(`INSERT OR IGNORE INTO orders(session_id,payment_id,paid_at,status)
-        SELECT ?, ?, ?, 'new' WHERE EXISTS
-        (SELECT 1 FROM reservations WHERE id=? AND status='held')`).bind(session.id,paymentId,paidAt,reservationId),
+        SELECT ?, ?, ?, 'new' WHERE EXISTS (SELECT 1 FROM reservations r
+        JOIN checkout_settlements c ON c.reservation_id=r.id
+        WHERE r.id=? AND r.status='held' AND c.session_id=? AND c.payment_id=?)`)
+        .bind(session.id,paymentId,paidAt,reservationId,session.id,paymentId),
       db.prepare(`UPDATE inventory SET quantity=quantity-CAST(json_extract(
         (SELECT items FROM reservations WHERE id=?), '$.'||sku) AS INTEGER)
-        WHERE json_extract((SELECT items FROM reservations WHERE id=? AND status='held'), '$.'||sku) IS NOT NULL`).bind(reservationId,reservationId),
-      db.prepare("UPDATE reservations SET status='paid' WHERE id=? AND status='held'").bind(reservationId)
+        WHERE changes()=1 AND json_extract((SELECT items FROM reservations WHERE id=? AND status='held'), '$.'||sku) IS NOT NULL`).bind(reservationId,reservationId),
+      db.prepare(`UPDATE reservations SET status='paid' WHERE id=? AND status='held' AND EXISTS
+        (SELECT 1 FROM checkout_settlements c JOIN orders o ON o.session_id=c.session_id AND o.payment_id=c.payment_id
+        WHERE c.reservation_id=reservations.id AND c.session_id=? AND c.payment_id=?)`).bind(reservationId,session.id,paymentId)
     ]);
     // Do not acknowledge a payment unless both the order and reservation are recorded.
     // Stripe can retry when an event arrives after a reservation was released.
-    const recorded = await db.prepare(`SELECT 1 AS ok FROM orders o JOIN reservations r
-      ON r.id=? AND r.status='paid' WHERE o.session_id=? AND o.payment_id=?`)
+    const recorded = await db.prepare(`SELECT 1 AS ok FROM orders o JOIN checkout_settlements c
+      ON c.session_id=o.session_id AND c.payment_id=o.payment_id JOIN reservations r
+      ON r.id=c.reservation_id AND r.id=? AND r.status='paid' WHERE o.session_id=? AND o.payment_id=?`)
       .bind(reservationId,session.id,paymentId).first();
     if (!recorded) throw new Error("Paid order needs reconciliation");
   } else {
