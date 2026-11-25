@@ -305,7 +305,7 @@ async function orderPage(url, env) {
   <p>Sidan uppdateras varje minut.</p>
   ${testMessage ? `<p class="notice" role="status">${testMessage}</p>` : ""}
   ${!env.STRIPE_WEBHOOK_SECRET
-    ? '<p class="notice">Stripe är inte anslutet ännu. Nya beställningar visas här när betalningar har aktiverats.</p>'
+    ? '<p class="notice">Försäljningen är ännu inte öppen.</p>'
     : env.STRIPE_MODE === "test" ? '<p class="notice">Stripe är i testläge.</p>' : ""}
   ${url.searchParams.get("status") === "changed" ? '<p class="notice" role="status">Orderns status har redan ändrats. Kontrollera listan och försök igen.</p>' : ""}
   <div class="board">${board}</div>
