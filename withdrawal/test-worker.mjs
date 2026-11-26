@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import { webcrypto } from 'node:crypto';
+import worker from './worker.mjs';
+if (!globalThis.crypto) globalThis.crypto = webcrypto;
+const origin = 'https://sweforms.se';
+const base = origin + '/studio/angra-kop/';
+const rows = [];
+const db = { prepare(sql) { return { bind(...v) { return { async run() { if (sql.startsWith('INSERT')) { rows.push(v); return {meta:{changes:1}}; } return {meta:{changes:1}}; } }; } }; } };
+const env = {DB:db,TURNSTILE_SITE_KEY:'site',TURNSTILE_SECRET_KEY:'secret',RESEND_API_KEY:'test',FROM_EMAIL:'SweForms <x@example.com>',OWNER_EMAIL:'owner@example.com',PUBLIC_ORIGIN:origin};
+let requests = [];
+globalThis.fetch = async (url,options) => { requests.push(String(url)); if (String(url).includes('siteverify')) return Response.json({success:true,hostname:'sweforms.se'}); if (String(url).includes('resend.com')) return Response.json({id:'mock'}); throw Error('unexpected network'); };
+let r = await worker.fetch(new Request(base),{}); assert.equal(r.status,503);
+r = await worker.fetch(new Request(base,{method:'POST',headers:{Origin:'https://attacker.example','Content-Type':'application/x-www-form-urlencoded'},body:''}),env); assert.equal(r.status,403);
+r = await worker.fetch(new Request(base,{method:'POST',headers:{Origin:origin,'Content-Type':'application/x-www-form-urlencoded'},body:'x'.repeat(18001)}),env); assert.equal(r.status,413);
+let form = new URLSearchParams({name:'<img src=x onerror=alert(1)>',email:'test@example.com',order:'abc',items:'Midvinternatt',confirm:'yes',request_id:crypto.randomUUID(),'cf-turnstile-response':'mock'});
+r = await worker.fetch(new Request(base,{method:'POST',headers:{Origin:origin,'Content-Type':'application/x-www-form-urlencoded'},body:form}),env);
+assert.equal(r.status,200); let html=await r.text(); assert(!html.includes('<img src=x')); assert(html.includes('&lt;img src=x'));
+assert.equal(rows.length,1); assert.equal(requests.filter(x=>x.includes('resend.com')).length,2); assert(!requests.some(x=>x.includes('stripe')));
+globalThis.fetch = async (url) => String(url).includes('siteverify') ? Response.json({success:true,hostname:'sweforms.se'}) : new Response('down',{status:503});
+form.set('request_id',crypto.randomUUID());
+r = await worker.fetch(new Request(base,{method:'POST',headers:{Origin:origin,'Content-Type':'application/x-www-form-urlencoded'},body:form}),env);
+html = await r.text(); assert.equal(r.status,200); assert(html.includes('e-postutskicket har �nnu inte bekr�ftats')); assert.equal(rows.length,2);
+console.log('Draft: missing configuration, cross-origin rejection, HTML escaping, dual notification attempts and no Stripe call passed with mocks.');
+
